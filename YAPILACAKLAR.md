@@ -9,6 +9,8 @@ kurallari: src/data/eslestirme.ts (strateji sunumu sayfa 8).
 
 - [ ] Gokce prototipi gezip yorum versin (ekran ekran)
 - [ ] Ilgi alani listesi (Yusuf cikaracak) -> ornek.ts'ye islenecek
+- [x] Kulup oner sureci: oneri -> 5 kisi "Ben de varim" -> ekip kontrolu -> kulup acilir (prototipte)
+- [ ] Sifir uyeyle baslangic: sahte kulup uyelerini bosalt, esigi 5'e indir, "x kisi kaldi" karti
 - [ ] Ilk kulupler ve esik sayisi (sunumdaki acik soru: kulup esigi kac kisi?)
 - [x] Fotograf: profilde zorunlu (1. adim), profilden degistirilebilir. Gercek yukleme (Supabase storage) veritabaniyla gelecek
 - [ ] Bildirimler ekrani (zil simdilik bos)

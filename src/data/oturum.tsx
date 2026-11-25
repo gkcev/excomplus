@@ -8,7 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 
 import type { Ben } from '@/data/eslestirme';
-import { kisiBul, SOHBETLER, type Sohbet } from '@/data/ornek';
+import { kisiBul, SOHBETLER, type KulupFikri, type Sohbet } from '@/data/ornek';
 
 export type Uye = Ben & {
   pozisyon?: string;
@@ -33,6 +33,10 @@ type Durum = {
   davetHakki: number;
   /** Uretilen davet kodum */
   davetKodum: string;
+  /** Benim onerdigim kulupler */
+  fikirlerim: KulupFikri[];
+  /** "Ben de varim" dedigim kulup onerileri */
+  destekledigimFikirler: string[];
 };
 
 const BASLANGIC: Durum = {
@@ -41,6 +45,8 @@ const BASLANGIC: Durum = {
   baglantilar: [],
   sohbetler: SOHBETLER,
   davetHakki: 1,
+  fikirlerim: [],
+  destekledigimFikirler: [],
   davetKodum: '',
 };
 
@@ -56,6 +62,9 @@ type Baglam = Durum & {
   baglan: (kisiId: string) => void;
   mesajGonder: (sohbetId: string, metin: string, hedef?: { tur: 'kisi' | 'kulup'; id: string }) => void;
   davetiKullan: () => void;
+  /** Kulup oner; yeni fikrin id'sini dondurur */
+  kulupOner: (f: Omit<KulupFikri, 'id' | 'oneren' | 'destekciler'>) => string;
+  fikriDestekle: (id: string) => void;
   cikis: () => void;
 };
 
@@ -127,6 +136,12 @@ export function OturumSaglayici({ children }: { children: ReactNode }) {
           return { ...d, sohbetler };
         }),
       davetiKullan: () => guncelle((d) => ({ ...d, davetHakki: Math.max(0, d.davetHakki - 1) })),
+      kulupOner: (f) => {
+        const id = `fikir-ben-${Date.now().toString(36)}`;
+        guncelle((d) => ({ ...d, fikirlerim: [{ ...f, id, oneren: 'ben', destekciler: [] }, ...d.fikirlerim] }));
+        return id;
+      },
+      fikriDestekle: (id) => guncelle((d) => ({ ...d, destekledigimFikirler: ekleCikar(d.destekledigimFikirler, id) })),
       cikis: () => setDurum(BASLANGIC),
     };
   }, [durum, hazir]);

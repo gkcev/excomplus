@@ -31,7 +31,7 @@ export function PlanKarti({ plan, neden }: { plan: Plan; neden?: string | null }
         </View>
         {neden && <Neden metin={neden} />}
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto' }}>
-          <AvatarYigini adlar={adlar} toplam={toplam} />
+          <AvatarYigini adlar={adlar} idler={plan.katilan} toplam={toplam} />
           <Dugme kucuk baslik={katildim ? 'Katılıyorsun' : 'Katıl'} tur={katildim ? 'hafif' : 'turuncu'} ikon={katildim ? 'check' : undefined} onPress={() => planaKatil(plan.id)} />
         </View>
       </View>

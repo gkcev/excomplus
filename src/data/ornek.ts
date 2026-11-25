@@ -159,56 +159,56 @@ export const PLANLAR: Plan[] = [
     id: 'sergi-turu', baslik: 'Rehberli sergi turu', tur: 'Küçük plan',
     gun: 'Cumartesi', saat: '11.00', semt: 'Tophane', mekan: 'İstanbul Modern',
     kontenjan: 12, katilan: ['selin', 'burcu', 'ayse'], ilgiler: ['sergi', 'fotograf'],
-    gorsel: require('@/assets/images/etkinlik/beyoglu-yeniden.webp'),
+    gorsel: require('@/assets/images/etkinlik/sergi-turu.jpg'),
     aciklama: 'Bir küratör eşliğinde yeni sergiyi geziyoruz, sonra kahveye oturuyoruz.',
   },
   {
     id: 'pazar-kosusu', baslik: 'Pazar sabahı koşusu', tur: 'Küçük plan',
     gun: 'Pazar', saat: '08.30', semt: 'Caddebostan', mekan: 'Sahil yolu',
     kontenjan: 15, katilan: ['mert', 'can'], ilgiler: ['kosu', 'doga'],
-    gorsel: require('@/assets/images/etkinlik/balik-halinde-sabah.webp'),
+    gorsel: require('@/assets/images/etkinlik/pazar-kosusu.jpg'),
     aciklama: '5 km rahat tempo. Her seviyeye uygun; bitişte kahvaltı.',
   },
   {
     id: 'sarap-tadimi', baslik: 'Butik şarap tadımı', tur: 'Küçük plan',
     gun: 'Cuma', saat: '19.30', semt: 'Karaköy', mekan: 'Bir butik şaraphane',
     kontenjan: 10, katilan: ['baris', 'emre', 'zeynep'], ilgiler: ['sarap', 'yemek'],
-    gorsel: require('@/assets/images/etkinlik/cem-sakarya-ile-viski.webp'),
+    gorsel: require('@/assets/images/etkinlik/sarap-tadimi.jpg'),
     aciklama: 'Ege üreticilerinden altı şarap, eşleşen küçük tabaklar.',
   },
   {
     id: 'kitap-kulubu', baslik: 'Kitap kulübü: ayın kitabı', tur: 'Kulüp buluşması',
     gun: 'Salı', saat: '19.30', semt: 'Moda', mekan: 'Bir sahaf kafe',
     kontenjan: 8, katilan: ['elif', 'deniz', 'ayse'], ilgiler: ['kitap'],
-    gorsel: require('@/assets/images/etkinlik/sinop-hafta-sonu.webp'),
+    gorsel: require('@/assets/images/etkinlik/kitap-kulubu.jpg'),
     aciklama: 'Bu ay bir roman konuşuyoruz. Okumadıysan da gel, dinle.',
   },
   {
     id: 'soylesi', baslik: 'Söyleşi: İkinci kariyer', tur: 'Küçük plan',
     gun: 'Perşembe', saat: '19.00', semt: 'Levent', mekan: 'Bir ortak çalışma alanı',
     kontenjan: 40, katilan: ['mert', 'emre', 'burcu', 'deniz'], ilgiler: ['girisim', 'teknoloji'],
-    gorsel: require('@/assets/images/etkinlik/veliefendi-strateji-dersi.webp'),
+    gorsel: require('@/assets/images/etkinlik/soylesi.jpg'),
     aciklama: 'Kurumsal hayattan girişime geçen üç konukla sohbet.',
   },
   {
     id: 'yelken', baslik: 'Gün batımında yelken', tur: 'Küçük plan',
     gun: 'Cumartesi', saat: '17.00', semt: 'Kuruçeşme', mekan: 'Marina',
     kontenjan: 8, katilan: ['can', 'zeynep'], ilgiler: ['yelken', 'doga'],
-    gorsel: require('@/assets/images/etkinlik/puglia-event.webp'),
+    gorsel: require('@/assets/images/etkinlik/yelken.jpg'),
     aciklama: 'Boğaz’da iki saatlik tekne turu. Deneyim gerekmez.',
   },
   {
     id: 'caz-gecesi', baslik: 'Caz gecesi', tur: 'Küçük plan',
     gun: 'Perşembe', saat: '21.00', semt: 'Beyoğlu', mekan: 'Bir caz kulübü',
     kontenjan: 20, katilan: ['ayse', 'selin', 'deniz'], ilgiler: ['caz', 'sinema'],
-    gorsel: require('@/assets/images/etkinlik/pub-walk.webp'),
+    gorsel: require('@/assets/images/etkinlik/caz-gecesi.jpg'),
     aciklama: 'Canlı kuartet, ayrılmış masalar.',
   },
   {
     id: 'acilis-bulusmasi', baslik: 'ExCom Plus açılış buluşması', tur: 'Büyük etkinlik',
     gun: '20 Mart', saat: '20.00', semt: 'Bebek', mekan: 'Sürpriz mekân',
     kontenjan: 200, katilan: ['ayse', 'mert', 'selin', 'burcu', 'baris', 'elif', 'can', 'emre'],
-    ilgiler: [], gorsel: require('@/assets/images/etkinlik/whisky-event.webp'),
+    ilgiler: [], gorsel: require('@/assets/images/etkinlik/acilis-bulusmasi.jpg'),
     aciklama: 'İlk davetlilerle tanışma gecesi. Ayın etkinliği.',
     ayinEtkinligi: true,
   },
@@ -239,6 +239,43 @@ export const KULUPLER: Kulup[] = [
 ];
 
 export const kulupBul = (id: string) => KULUPLER.find((k) => k.id === id);
+
+/**
+ * KULUP ONERISI (fikir) - uyelerin onerdigi, henuz acilmamis kulupler.
+ * Surec: 1) uye onerir  2) FIKIR_ESIGI kadar kisi "Ben de varim" der
+ *        3) ekip kisa bir kontrol yapar (tekrar / uygunsuz mu)  4) kulup acilir,
+ *        oneren isterse ev sahibi olur.
+ */
+export const FIKIR_ESIGI = 5;
+
+export type KulupFikri = {
+  id: string;
+  ad: string;
+  ilgi: string;
+  aciklama: string;
+  /** Oneren kisi id ('ben' = bu cihazdaki uye) */
+  oneren: string;
+  /** Oneren ev sahibi olmak istiyor mu */
+  evSahibi: boolean;
+  /** "Ben de varim" diyenler (oneren haric) */
+  destekciler: string[];
+};
+
+export const KULUP_FIKIRLERI: KulupFikri[] = [
+  {
+    id: 'fikir-yelken', ad: 'Hafta Sonu Yelkencileri', ilgi: 'yelken', oneren: 'mert', evSahibi: true,
+    aciklama: 'Ayda bir Moda açıklarında günübirlik tekne. Deneyim şart değil.',
+    destekciler: ['baris', 'can', 'selin'],
+  },
+  {
+    id: 'fikir-sarap', ad: 'Şarap ve Peynir Akşamları', ilgi: 'sarap', oneren: 'zeynep', evSahibi: false,
+    aciklama: 'Her ay bir bölge, küçük bir tadım ve sohbet.',
+    destekciler: ['elif'],
+  },
+];
+
+/** Bir fikri destekleyen toplam kisi (oneren dahil) */
+export const fikirSayisi = (f: KulupFikri) => f.destekciler.length + 1;
 
 export type Mesaj = { kimden: 'ben' | string; metin: string; saat: string };
 export type Sohbet = { id: string; tur: 'kisi' | 'kulup'; hedef: string; mesajlar: Mesaj[] };

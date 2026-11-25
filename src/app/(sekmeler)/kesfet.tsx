@@ -3,15 +3,16 @@ import { useState } from 'react';
 import { ScrollView, View } from 'react-native';
 
 import { KulupKarti } from '@/components/kartlar';
-import { Avatar, BolumBasligi, Cip, Ekran, Kart, Metin, Neden } from '@/components/temel';
-import { Bosluk, Colors, Yazi } from '@/constants/theme';
+import { Avatar, BolumBasligi, Cip, Dugme, Ekran, IlerlemeCubugu, Kart, Metin, Neden } from '@/components/temel';
+import { Bosluk, Colors, Kose, Marka, Yazi } from '@/constants/theme';
 import { kisiOnerileri } from '@/data/eslestirme';
-import { ilgiAdi, KULUPLER } from '@/data/ornek';
+import { FIKIR_ESIGI, fikirSayisi, ilgiAdi, ilgiSimge, KULUP_FIKIRLERI, KULUPLER } from '@/data/ornek';
 import { useOturum } from '@/data/oturum';
 
 /** KESFET: kisiler (nedeniyle) ve tum kulupler */
 export default function Kesfet() {
-  const { uye, baglantilar } = useOturum();
+  const { uye, baglantilar, fikirlerim, destekledigimFikirler } = useOturum();
+  const fikirler = [...fikirlerim, ...KULUP_FIKIRLERI];
   const [sekme, setSekme] = useState<'kisiler' | 'kulupler'>('kisiler');
   const oneriler = kisiOnerileri(uye!, 20, uye!.davetEden ? [uye!.davetEden] : []);
   const benimkiler = KULUPLER.filter((k) => uye!.ilgiler.includes(k.ilgi));
@@ -50,6 +51,36 @@ export default function Kesfet() {
         </View>
       ) : (
         <View style={{ gap: Bosluk.xl }}>
+          <Kart style={{ padding: Bosluk.lg, gap: Bosluk.sm, backgroundColor: Marka.lacivert }}>
+            <Metin style={{ ...Yazi.kartBasligi, color: Colors.white }}>Aradığın kulüp yok mu?</Metin>
+            <Metin style={{ ...Yazi.ikincil, color: '#D5D9E0' }}>
+              Öner, {FIKIR_ESIGI} kişi “Ben de varım” deyince açılsın.
+            </Metin>
+            <Dugme baslik="Kulüp öner" ikon="plus" tur="turuncu" onPress={() => router.push('/kulup-oner')} />
+          </Kart>
+
+          <View style={{ gap: Bosluk.md }}>
+            <BolumBasligi baslik="Önerilen kulüpler" />
+            {fikirler.map((f) => {
+              const sayi = fikirSayisi(f) + (destekledigimFikirler.includes(f.id) ? 1 : 0);
+              return (
+                <Kart key={f.id} onPress={() => router.push(`/kulup-fikri/${f.id}`)} style={{ padding: Bosluk.md, flexDirection: 'row', alignItems: 'center', gap: Bosluk.md }}>
+                  <View style={{ width: 44, height: 44, borderRadius: Kose.md, backgroundColor: Marka.seftali, alignItems: 'center', justifyContent: 'center' }}>
+                    <Metin style={{ fontSize: 22 }}>{ilgiSimge(f.ilgi)}</Metin>
+                  </View>
+                  <View style={{ flex: 1, gap: 4 }}>
+                    <Metin style={Yazi.isim} numberOfLines={1}>{f.ad}</Metin>
+                    <Metin style={{ ...Yazi.ikincil, color: Colors.textMuted }}>
+                      {sayi >= FIKIR_ESIGI ? 'Ekip onayında' : `${sayi} / ${FIKIR_ESIGI} kişi varım dedi`}
+                      {f.oneren === 'ben' ? ' · senin önerin' : ''}
+                    </Metin>
+                    <IlerlemeCubugu oran={Math.min(1, sayi / FIKIR_ESIGI)} />
+                  </View>
+                </Kart>
+              );
+            })}
+          </View>
+
           <View style={{ gap: Bosluk.md }}>
             <BolumBasligi baslik="İlgi alanlarına göre" />
             {benimkiler.map((k) => (

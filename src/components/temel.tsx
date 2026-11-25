@@ -20,6 +20,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Icon, type IconName } from '@/components/icon';
+import { KISI_FOTOLARI } from '@/data/fotolar';
 import { AVATAR_PASTELLERI, Bosluk, Colors, icerikOrtala, kartGolgesi, Kose, Marka, Yazi } from '@/constants/theme';
 
 /* ---------- Metin: Outfit, kalinliga gore dogru dosya ---------- */
@@ -121,8 +122,10 @@ export function Cip({
 /* ---------- Avatar: bas harfli pastel daire (prototipte foto yok) ---------- */
 
 export function Avatar({ ad, boyut = 44, id, foto }: { ad: string; boyut?: number; id?: string; foto?: string }) {
-  if (foto) {
-    return <Image source={{ uri: foto }} style={{ width: boyut, height: boyut, borderRadius: boyut / 2 }} contentFit="cover" />;
+  // Fotograf: verilen (uyenin kendi fotosu) ya da ornek kisinin hazir fotosu
+  const kaynak = foto ? { uri: foto } : id ? KISI_FOTOLARI[id] : undefined;
+  if (kaynak) {
+    return <Image source={kaynak} style={{ width: boyut, height: boyut, borderRadius: boyut / 2 }} contentFit="cover" />;
   }
   const anahtar = (id ?? ad).split('').reduce((t, c) => t + c.charCodeAt(0), 0);
   const zemin = AVATAR_PASTELLERI[anahtar % AVATAR_PASTELLERI.length];
@@ -140,13 +143,13 @@ export function Avatar({ ad, boyut = 44, id, foto }: { ad: string; boyut?: numbe
 }
 
 /** Ust uste binmis kucuk avatarlar + "+18" */
-export function AvatarYigini({ adlar, toplam }: { adlar: string[]; toplam: number }) {
+export function AvatarYigini({ adlar, toplam, idler }: { adlar: string[]; toplam: number; idler?: string[] }) {
   const goster = adlar.slice(0, 3);
   return (
     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
       {goster.map((a, i) => (
         <View key={a + i} style={{ marginLeft: i ? -8 : 0, borderWidth: 2, borderColor: Colors.white, borderRadius: 20 }}>
-          <Avatar ad={a} boyut={24} />
+          <Avatar ad={a} id={idler?.[i]} boyut={24} />
         </View>
       ))}
       {toplam > goster.length && (
