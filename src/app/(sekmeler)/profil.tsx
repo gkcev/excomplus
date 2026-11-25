@@ -3,6 +3,7 @@ import { router } from 'expo-router';
 import { useState } from 'react';
 import { Platform, Pressable, View } from 'react-native';
 
+import { FotoIzgarasi, EN_FAZLA_FOTO } from '@/components/fotolar';
 import { Icon, type IconName } from '@/components/icon';
 import { Avatar, Dugme, Ekran, Kart, KulupGorseli, Metin } from '@/components/temel';
 import { Bosluk, Colors, Durum, Kose, Marka, Yazi } from '@/constants/theme';
@@ -36,6 +37,11 @@ export default function Profil() {
     { ikon: 'map-pin', yazi: [uye.semt, uye.sehir].filter(Boolean).join(', ') },
     ...(uye.universite ? [{ ikon: 'mezuniyet' as IconName, yazi: uye.universite }] : []),
   ];
+
+  const fotoEkle = async () => {
+    const f = await fotoSec();
+    if (f) o.profiliGuncelle({ fotolar: [...(uye.fotolar ?? []), f].slice(0, EN_FAZLA_FOTO) });
+  };
 
   const davetEt = async () => {
     if (await davetPaylas(o.davetKodum)) {
@@ -123,6 +129,21 @@ export default function Profil() {
       </View>
 
       {!!uye.hakkinda && <Metin style={{ color: Colors.textMuted, paddingHorizontal: 4 }}>{uye.hakkinda}</Metin>}
+
+      {/* ---------------- Fotograflarim (en fazla 6) ---------------- */}
+      <BolumBasligi
+        baslik={`Fotoğraflarım${(uye.fotolar ?? []).length ? ` (${(uye.fotolar ?? []).length}/${EN_FAZLA_FOTO})` : ''}`}
+        sag={(uye.fotolar ?? []).length < EN_FAZLA_FOTO ? 'Fotoğraf ekle' : undefined}
+        onSag={fotoEkle}
+      />
+      {(uye.fotolar ?? []).length === 0 && (
+        <Metin style={{ ...Yazi.ikincil, color: Colors.textMuted }}>Hobilerinden, gezilerinden fotoğraflar ekle; profilini görenler seni daha iyi tanısın.</Metin>
+      )}
+      <FotoIzgarasi
+        fotolar={uye.fotolar ?? []}
+        ekle={fotoEkle}
+        sil={(i) => o.profiliGuncelle({ fotolar: (uye.fotolar ?? []).filter((_, j) => j !== i) })}
+      />
 
       {/* ---------------- Baglantilarim ---------------- */}
       <BolumBasligi baslik="Bağlantılarım" />

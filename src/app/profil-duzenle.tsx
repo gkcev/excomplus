@@ -3,6 +3,7 @@ import { useState, type ReactNode } from 'react';
 import { View } from 'react-native';
 
 import { Alan } from '@/components/alan';
+import { spotifyIdBul, SpotifyOynatici } from '@/components/spotify';
 import { Cip, Dugme, Ekran, Kart, Metin, UstBar } from '@/components/temel';
 import { Bosluk, Colors, Yazi } from '@/constants/theme';
 import { ILGI_ALANLARI, KULUPLER, MUZIK_TARZLARI, SEHIRLER, SEMTLER } from '@/data/ornek';
@@ -32,11 +33,14 @@ export default function ProfilDuzenle() {
   const [ilgiler, setIlgiler] = useState<string[]>(uye?.ilgiler ?? []);
   const [muzik, setMuzik] = useState<string[]>(uye?.muzik ?? []);
   const [sanatcilar, setSanatcilar] = useState((uye?.sanatcilar ?? []).join(', '));
+  const [sarkiBaglanti, setSarkiBaglanti] = useState(uye?.sarki ? `https://open.spotify.com/track/${uye.sarki.spotifyId}` : '');
+  const sarkiId = spotifyIdBul(sarkiBaglanti);
+  const sarkiHatali = sarkiBaglanti.trim() !== '' && !sarkiId;
 
   if (!uye) return <Ekran ust={<UstBar />}><Metin>Önce profilini oluştur.</Metin></Ekran>;
 
   const degistir = (liste: string[], id: string) => (liste.includes(id) ? liste.filter((x) => x !== id) : [...liste, id]);
-  const gecerli = ad.trim().length > 2 && ilgiler.length >= 3 && !!semt;
+  const gecerli = ad.trim().length > 2 && ilgiler.length >= 3 && !!semt && !sarkiHatali;
 
   const kaydet = () => {
     profiliGuncelle({
@@ -54,6 +58,7 @@ export default function ProfilDuzenle() {
       ilgiler,
       muzik,
       sanatcilar: listeyeCevir(sanatcilar),
+      sarki: sarkiId ? { spotifyId: sarkiId } : undefined,
     });
     // Yeni secilen ilgi alani = o kulubun bekleme listesi
     KULUPLER.filter((k) => ilgiler.includes(k.ilgi) && !uye.ilgiler.includes(k.ilgi) && !kuluplerim.includes(k.id)).forEach((k) => kulubeKatil(k.id));
@@ -112,6 +117,11 @@ export default function ProfilDuzenle() {
           ))}
         </View>
         <Alan etiket="Sevdiğin sanatçılar (virgülle ayır)" deger={sanatcilar} degis={setSanatcilar} ipucu="Örn. Sezen Aksu, Norah Jones" />
+        <Alan etiket="Profil şarkın (Spotify bağlantısı)" deger={sarkiBaglanti} degis={setSarkiBaglanti} ipucu="https://open.spotify.com/track/…" klavye="email-address" />
+        <Metin style={{ ...Yazi.ikincil, color: sarkiHatali ? Colors.heart : Colors.textMuted, marginTop: -Bosluk.sm }}>
+          {sarkiHatali ? 'Bu bir Spotify şarkı bağlantısı değil. Şarkıda Paylaş → Şarkı bağlantısını kopyala.' : 'Spotify’da şarkıyı aç: Paylaş → Şarkı bağlantısını kopyala, buraya yapıştır.'}
+        </Metin>
+        {sarkiId && <SpotifyOynatici spotifyId={sarkiId} />}
       </Bolum>
     </Ekran>
   );

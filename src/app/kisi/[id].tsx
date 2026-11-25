@@ -2,11 +2,14 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { useState, type ReactNode } from 'react';
 import { Linking, Pressable, View } from 'react-native';
 
+import { FotoIzgarasi } from '@/components/fotolar';
 import { Icon, type IconName } from '@/components/icon';
+import { SpotifyOynatici } from '@/components/spotify';
 import { Avatar, Dugme, Ekran, Kart, Metin, Neden, UstBar } from '@/components/temel';
 import { Bosluk, Colors, Kose, Marka, Yazi } from '@/constants/theme';
 import { kisiPuani } from '@/data/eslestirme';
 import { ilgiAdi, kisiBul, tamAd, type Kisi } from '@/data/ornek';
+import { kisiGalerisi } from '@/data/fotolar';
 import { useOturum } from '@/data/oturum';
 import { linkedinKisa } from '@/data/profil';
 
@@ -46,6 +49,8 @@ export default function KisiProfili() {
   const ortakTarz = ortak(k.muzik, uye.muzik);
   const ortakSanatci = ortak(k.sanatcilar ?? [], uye.sanatcilar ?? []);
   const linkedin = linkedinKisa(k.linkedin ?? '');
+  const galeri = benMiyim ? uye.fotolar ?? [] : kisiGalerisi(k.ilgiler);
+  const sarki = benMiyim ? uye.sarki : undefined;
 
   const bilgiler: { ikon: IconName; etiket: string; deger?: string }[] = [
     { ikon: 'id-card', etiket: 'Pozisyon', deger: k.pozisyon },
@@ -161,8 +166,9 @@ export default function KisiProfili() {
         </View>
       </Bolum>
 
-      {(k.muzik.length > 0 || (k.sanatcilar ?? []).length > 0) && (
+      {(k.muzik.length > 0 || (k.sanatcilar ?? []).length > 0 || !!sarki) && (
         <Bolum baslik="Müzik zevki" not={ortakTarz.length + ortakSanatci.length > 0 ? 'ortaklar işaretli' : undefined}>
+          {sarki && <SpotifyOynatici spotifyId={sarki.spotifyId} />}
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
             {k.muzik.map((m) => (
               <Hap key={m} yazi={m} ortak={ortakTarz.includes(m)} />
@@ -178,6 +184,12 @@ export default function KisiProfili() {
               </View>
             </View>
           )}
+        </Bolum>
+      )}
+
+      {galeri.length > 0 && (
+        <Bolum baslik="Fotoğraflar">
+          <FotoIzgarasi fotolar={galeri} />
         </Bolum>
       )}
 

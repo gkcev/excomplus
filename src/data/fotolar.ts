@@ -16,6 +16,12 @@ export const KISI_FOTOLARI: Record<string, number> = {
 };
 
 /**
+ * Ornek kisilerin profil galerisi (prototip): ilk uc ilgi alaninin fotografi.
+ * Gercekte her uye kendi fotograflarini ekler (en fazla 6).
+ */
+export const kisiGalerisi = (ilgiler: string[]) => ilgiler.slice(0, 3).map((i) => ILGI_GORSELLERI[i]).filter(Boolean);
+
+/**
  * Ilgi alani fotograflari: kulup ve kulup onerisi gorseli buradan gelir (emoji yerine).
  * Bazilari ayni konudaki etkinlik fotografini kullanir.
  */

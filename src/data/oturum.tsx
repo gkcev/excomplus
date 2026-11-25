@@ -19,6 +19,10 @@ export type Uye = Ben & {
   bolum?: string;
   uzmanliklar?: string[];
   sanatcilar?: string[];
+  /** Profil galerisi: en fazla 6 fotograf (prototipte cihazda, data URI) */
+  fotolar?: string[];
+  /** Profil sarkisi (Spotify) */
+  sarki?: { spotifyId: string };
   /** Profil fotografi (zorunlu). Prototipte cihazda data URI olarak saklanir. */
   foto?: string;
 };

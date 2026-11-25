@@ -27,4 +27,4 @@ kurallari: src/data/eslestirme.ts (strateji sunumu sayfa 8).
 - [x] Kulup bulusmalari: ev sahibi koyar, Etkinlikler'de 'Kulup bulusmasi' + Kuluplerim filtresi, sohbete duser (prototipte)
 - [ ] Ekip paneli: uygunsuz kulup bulusmasini kaldirma
 - [x] Profil (ExCom'dan uyarlandi): tanitim karti + doluluk, 'Profili gor', ayrintili kisi profili (bilgi karti, uzmanlik, muzik, ortaklar, engelle/sikayet), Profili duzenle
-- [ ] Profil fotograf galerisi (ExCom'da en fazla 6 foto) ve Spotify profil sarkisi
+- [x] Profil fotograf galerisi (en fazla 6, tam ekran) ve Spotify profil sarkisi (baglanti yapistirilir). Gercek yukleme veritabaniyla

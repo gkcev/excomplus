@@ -6,13 +6,14 @@ import type { Uye } from '@/data/oturum';
  * neyin bos sayildigini bilsin.
  */
 const ALANLAR: { ad: string; dolu: (u: Uye) => boolean }[] = [
-  { ad: 'fotoğraf', dolu: (u) => !!u.foto },
+  { ad: 'profil fotoğrafı', dolu: (u) => !!u.foto },
   { ad: 'iş', dolu: (u) => !!(u.pozisyon || u.sirket) },
   { ad: 'hakkımda', dolu: (u) => (u.hakkinda ?? '').trim().length > 0 },
   { ad: 'üniversite', dolu: (u) => !!u.universite },
   { ad: 'uzmanlık alanları', dolu: (u) => (u.uzmanliklar ?? []).length > 0 },
   { ad: 'ilgi alanları', dolu: (u) => u.ilgiler.length >= 3 },
-  { ad: 'müzik zevki', dolu: (u) => u.muzik.length > 0 || (u.sanatcilar ?? []).length > 0 },
+  { ad: 'müzik zevki', dolu: (u) => u.muzik.length > 0 || (u.sanatcilar ?? []).length > 0 || !!u.sarki },
+  { ad: 'fotoğraflar', dolu: (u) => (u.fotolar ?? []).length > 0 },
   { ad: 'semt', dolu: (u) => !!u.semt },
 ];
 
