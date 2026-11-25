@@ -29,6 +29,7 @@ export default function Etkinlikler() {
   // Aylik takvim: bir gune dokununca o gunun etkinlikleri listelenir
   const bugun = new Date();
   const [secili, setSecili] = useState<Date | null>(null);
+  const [takvimAcik, setTakvimAcik] = useState(false);
   const [ay, setAy] = useState({ yil: bugun.getFullYear(), ay: bugun.getMonth() });
   const izgara = ayIzgarasi(ay.yil, ay.ay);
   const ayDegistir = (fark: number) => {
@@ -45,10 +46,21 @@ export default function Etkinlikler() {
   return (
     <Ekran>
       <View style={{ gap: 4 }}>
-        <Metin style={Yazi.ekranBasligi}>Etkinlikler</Metin>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Metin style={Yazi.ekranBasligi}>Etkinlikler</Metin>
+          <Pressable
+            onPress={() => setTakvimAcik(!takvimAcik)}
+            accessibilityRole="button"
+            accessibilityState={{ expanded: takvimAcik }}
+            style={{ flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 12, paddingVertical: 8, borderRadius: 999, borderWidth: 1, borderColor: takvimAcik ? Marka.turuncu : Colors.border, backgroundColor: takvimAcik ? Marka.turuncu : Colors.white }}>
+            <Icon name="calendar" size={16} color={takvimAcik ? Colors.white : Colors.accent} />
+            <Metin style={{ ...Yazi.etiket, color: takvimAcik ? Colors.white : Colors.text }}>{takvimAcik ? 'Takvimi kapat' : 'Takvimi gör'}</Metin>
+          </Pressable>
+        </View>
         <Metin style={{ color: Colors.textMuted }}>Ekibin planları ve kulüplerin buluşmaları; sen sadece “Katıl” de.</Metin>
       </View>
-      {/* Aylik takvim */}
+      {/* Aylik takvim: dugmeyle acilir, gun secince kapanir */}
+      {takvimAcik && (
       <Kart style={{ padding: Bosluk.md, gap: Bosluk.sm, marginTop: -Bosluk.sm }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
           <Pressable onPress={() => ayDegistir(-1)} hitSlop={10} accessibilityLabel="Önceki ay" style={{ padding: 4, transform: [{ scaleX: -1 }] }}>
@@ -74,7 +86,10 @@ export default function Etkinlikler() {
             return (
               <View key={i} style={{ width: `${100 / 7}%`, height: 46, alignItems: 'center', justifyContent: 'center' }}>
                 <Pressable
-                  onPress={() => setSecili(sec ? null : d)}
+                  onPress={() => {
+                    setSecili(sec ? null : d);
+                    setTakvimAcik(false);
+                  }}
                   disabled={eski}
                   accessibilityRole="button"
                   accessibilityLabel={`${uzunTarih(d)}, ${sayi} etkinlik`}
@@ -96,6 +111,7 @@ export default function Etkinlikler() {
           })}
         </View>
       </Kart>
+      )}
 
       <View style={{ flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: -Bosluk.sm }}>
         <Metin style={Yazi.bolumBasligi}>
