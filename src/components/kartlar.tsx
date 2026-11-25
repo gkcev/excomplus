@@ -1,8 +1,9 @@
 /** Tekrar kullanilan kartlar: plan, kisi, kulup */
 
 import { Image } from 'expo-image';
+import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
-import { Pressable, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 
 import { Icon } from '@/components/icon';
 import { Avatar, AvatarYigini, Dugme, IlerlemeCubugu, Kart, KulupGorseli, Metin, Neden } from '@/components/temel';
@@ -20,23 +21,27 @@ export function PlanKarti({ plan, neden }: { plan: Plan; neden?: string | null }
   const toplam = plan.katilan.length + (katildim ? 1 : 0);
   return (
     <Kart onPress={() => router.push(`/etkinlik/${plan.id}`)} style={{ overflow: 'hidden' }}>
-      <View>
-        <Image source={plan.gorsel} style={{ width: '100%', height: 190 }} contentFit="cover" />
-        <View style={{ position: 'absolute', top: Bosluk.md, left: Bosluk.md, backgroundColor: Colors.white, borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4 }}>
+      {/* Fotograf: baslik ve tarih ustunde, alttan koyulasan gecisle okunur */}
+      <View style={{ height: 150 }}>
+        <Image source={plan.gorsel} style={StyleSheet.absoluteFill} contentFit="cover" />
+        <LinearGradient colors={['rgba(11,25,44,0)', 'rgba(11,25,44,0.85)']} locations={[0.35, 1]} style={StyleSheet.absoluteFill} />
+        <View style={{ position: 'absolute', top: Bosluk.md, left: Bosluk.md, backgroundColor: 'rgba(255,255,255,0.92)', borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3 }}>
           <Metin style={{ ...Yazi.etiket, color: Colors.accent }}>{plan.tur}</Metin>
         </View>
+        <View style={{ position: 'absolute', left: Bosluk.md, right: Bosluk.md, bottom: Bosluk.md, gap: 2 }}>
+          <Metin style={{ ...Yazi.kartBasligi, color: Colors.white }} numberOfLines={1}>{plan.baslik}</Metin>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+            <Icon name="calendar" size={13} color="#E8EBF0" />
+            <Metin style={{ ...Yazi.ikincil, color: '#E8EBF0' }} numberOfLines={1}>{plan.gun} · {plan.saat} · {plan.semt}</Metin>
+          </View>
+        </View>
       </View>
-      <View style={{ padding: Bosluk.lg, gap: 6 }}>
-        <Metin style={Yazi.kartBasligi} numberOfLines={2}>{plan.baslik}</Metin>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-          <Icon name="calendar" size={13} color={Colors.textMuted} />
-          <Metin style={{ ...Yazi.ikincil, color: Colors.textMuted }}>{plan.gun} · {plan.saat} · {plan.semt}</Metin>
-        </View>
-        {neden && <Neden metin={neden} />}
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 4 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: Bosluk.md, paddingHorizontal: Bosluk.md, paddingVertical: 10 }}>
+        <View style={{ flex: 1, gap: 4 }}>
+          {neden && <Neden metin={neden} />}
           <AvatarYigini adlar={adlar} idler={plan.katilan} toplam={toplam} />
-          <Dugme kucuk baslik={katildim ? 'Katılıyorsun' : 'Katıl'} tur={katildim ? 'hafif' : 'turuncu'} ikon={katildim ? 'check' : undefined} onPress={() => planaKatil(plan.id)} />
         </View>
+        <Dugme kucuk baslik={katildim ? 'Katılıyorsun' : 'Katıl'} tur={katildim ? 'hafif' : 'turuncu'} ikon={katildim ? 'check' : undefined} onPress={() => planaKatil(plan.id)} />
       </View>
     </Kart>
   );

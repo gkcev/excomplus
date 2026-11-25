@@ -4,11 +4,11 @@ import { Pressable, ScrollView, View } from 'react-native';
 
 import { Icon } from '@/components/icon';
 import { KisiKarti, KulupKarti, PlanKarti } from '@/components/kartlar';
-import { Avatar, BolumBasligi, Cip, Dugme, Ekran, IlerlemeCubugu, Kart, KulupGorseli, Logo, Metin } from '@/components/temel';
+import { Avatar, BolumBasligi, Dugme, Ekran, IlerlemeCubugu, Kart, KulupGorseli, Logo, Metin } from '@/components/temel';
 import { Bosluk, Colors, Kose, Marka, Yazi } from '@/constants/theme';
 import { davetPaylas } from '@/data/davet';
 import { kisiOnerileri, planNedeni, planPuani } from '@/data/eslestirme';
-import { ilgiAdi, ilgiSimge, KULUPLER, PLANLAR } from '@/data/ornek';
+import { ilgiAdi, KULUPLER, PLANLAR } from '@/data/ornek';
 import { useOturum } from '@/data/oturum';
 
 /**
@@ -59,12 +59,6 @@ export default function AnaSayfa() {
           <Metin style={{ flex: 1, color: Colors.textMuted }}>ExCom AI ile plan yap, insan bul, öneri al…</Metin>
           <Icon name="mikrofon" size={20} color={Colors.textMuted} />
         </Pressable>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
-          {uye.ilgiler.map((i) => (
-            <Cip key={i} metin={ilgiAdi(i)} simge={ilgiSimge(i)} onPress={() => router.navigate({ pathname: '/etkinlikler', params: { ilgi: i } })} />
-          ))}
-          <Cip metin={uye.semt} simge="📍" />
-        </ScrollView>
       </View>
 
       {/* Senin icin bugun */}

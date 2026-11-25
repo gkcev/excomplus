@@ -34,7 +34,7 @@ export default function EtkinlikDetay() {
           />
         </View>
       }>
-      <Image source={p.gorsel} style={{ width: '100%', height: 280, borderRadius: Kose.xl, marginTop: -Bosluk.md }} contentFit="cover" />
+      <Image source={p.gorsel} style={{ width: '100%', height: 220, borderRadius: Kose.xl, marginTop: -Bosluk.md }} contentFit="cover" />
       <View style={{ gap: Bosluk.sm }}>
         <Metin style={Yazi.ekranBasligi}>{p.baslik}</Metin>
         {neden && <Neden metin={neden} />}
