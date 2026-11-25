@@ -11,10 +11,10 @@ import { useOturum } from '@/data/oturum';
 
 /** KESFET: kisiler (nedeniyle) ve tum kulupler */
 export default function Kesfet() {
-  const { uye, baglantilar, fikirlerim, destekledigimFikirler } = useOturum();
+  const { uye, baglantilar, fikirlerim, destekledigimFikirler, engellediklerim } = useOturum();
   const fikirler = [...fikirlerim, ...KULUP_FIKIRLERI];
   const [sekme, setSekme] = useState<'kisiler' | 'kulupler'>('kisiler');
-  const oneriler = kisiOnerileri(uye!, 20, uye!.davetEden ? [uye!.davetEden] : []);
+  const oneriler = kisiOnerileri(uye!, 20, [...(uye!.davetEden ? [uye!.davetEden] : []), ...engellediklerim]);
   const benimkiler = KULUPLER.filter((k) => uye!.ilgiler.includes(k.ilgi));
   const digerleri = KULUPLER.filter((k) => !uye!.ilgiler.includes(k.ilgi));
 

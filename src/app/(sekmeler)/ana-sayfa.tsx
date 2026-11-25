@@ -24,7 +24,7 @@ export default function AnaSayfa() {
     .map((p) => ({ p, puan: planPuani(uye, p) }))
     .sort((a, b) => b.puan - a.puan);
   const oneCikan = planlar[0]?.p;
-  const oneriler = kisiOnerileri(uye, 3, uye.davetEden ? [uye.davetEden] : []);
+  const oneriler = kisiOnerileri(uye, 3, [...(uye.davetEden ? [uye.davetEden] : []), ...oturum.engellediklerim]);
   const kulupler = KULUPLER.filter((k) => uye.ilgiler.includes(k.ilgi));
   // Bekleme listesinde oldugum, esige en yakin, henuz acilmamis kulup: "Tenis kulubunun acilmasina 2 kisi kaldi"
   const sayiOf = (k: (typeof kulupler)[number]) => k.uyeler.length + (oturum.kuluplerim.includes(k.id) ? 1 : 0);

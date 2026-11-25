@@ -53,8 +53,19 @@ export type Kisi = {
   davetEden?: string;
   /** Tanidiklari (baglantilari) - ortak tanidik hesabi icin */
   tanidiklar: string[];
+  /** Yalnizca arka planda (+-8 yil yakinlik); profilde gosterilmez */
   mezuniyet?: number;
+  universite?: string;
+  bolum?: string;
+  /** Ne is yaptigini anlatan etiketler (pozisyon yazisindan daha aciklayici) */
+  uzmanliklar?: string[];
+  /** Sevdigi sanatcilar (muzik zevki karti) */
+  sanatcilar?: string[];
+  linkedin?: string;
 };
+
+/** Muzik tarzlari (profil doldurma ve duzenleme) */
+export const MUZIK_TARZLARI = ['caz', 'rock', 'pop', 'klasik', 'indie', 'elektronik', 'Türkçe pop', 'alternatif', 'blues', 'hip hop'];
 
 /** Plus'taki diger uyeler */
 export const KISILER: Kisi[] = [
@@ -64,6 +75,7 @@ export const KISILER: Kisi[] = [
     sirket: 'Bir yazılım şirketi', pozisyon: 'Ürün yöneticisi',
     hakkinda: 'Hafta sonları galeri gezip kahve içmeyi seviyorum.',
     tanidiklar: ['selin', 'mert', 'burcu', 'baris', 'deniz'], mezuniyet: 2012,
+    universite: 'Boğaziçi Üniversitesi', bolum: 'İşletme', uzmanliklar: ['Ürün yönetimi', 'Kullanıcı araştırması'], sanatcilar: ['Norah Jones', 'Kalben'], linkedin: 'linkedin.com/in/ornek-ayse',
   },
   {
     id: 'selin', ad: 'Selin', soyadHarf: 'D', sehir: 'İstanbul', semt: 'Kadıköy',
@@ -71,6 +83,7 @@ export const KISILER: Kisi[] = [
     sirket: 'Bir danışmanlık şirketi', pozisyon: 'Kıdemli danışman',
     hakkinda: 'Sabah teniscisi, akşam sergi gezgini.',
     davetEden: 'ayse', tanidiklar: ['ayse', 'burcu', 'deniz', 'can'], mezuniyet: 2014,
+    universite: 'ODTÜ', bolum: 'Endüstri Mühendisliği', uzmanliklar: ['Strateji', 'Süreç tasarımı'], sanatcilar: ['Gregory Porter', 'Bon Iver'],
   },
   {
     id: 'mert', ad: 'Mert', soyadHarf: 'K', sehir: 'İstanbul', semt: 'Beşiktaş',
@@ -78,18 +91,21 @@ export const KISILER: Kisi[] = [
     sirket: 'Bir fintek girişimi', pozisyon: 'Kurucu ortak',
     hakkinda: 'Pazar sabahları Caddebostan sahilinde koşuyorum.',
     davetEden: 'ayse', tanidiklar: ['ayse', 'baris', 'can', 'emre'], mezuniyet: 2011,
+    universite: 'İTÜ', bolum: 'Bilgisayar Mühendisliği', uzmanliklar: ['Ödeme sistemleri', 'Girişimcilik'], sanatcilar: ['Duman', 'Arctic Monkeys'], linkedin: 'linkedin.com/in/ornek-mert',
   },
   {
     id: 'burcu', ad: 'Burcu', soyadHarf: 'A', sehir: 'İstanbul', semt: 'Ataşehir',
     ilgiler: ['sergi', 'fotograf', 'seyahat', 'sinema'], muzik: ['caz'],
     sirket: 'Bir banka', pozisyon: 'Pazarlama müdürü',
     tanidiklar: ['ayse', 'selin', 'elif'], mezuniyet: 2010,
+    universite: 'Bilkent Üniversitesi', bolum: 'İletişim', uzmanliklar: ['Marka yönetimi', 'Dijital pazarlama'], sanatcilar: ['Chet Baker', 'Sezen Aksu'],
   },
   {
     id: 'baris', ad: 'Barış', soyadHarf: 'T', sehir: 'İstanbul', semt: 'Ataşehir',
     ilgiler: ['tenis', 'seyahat', 'padel', 'sarap'], muzik: ['pop'],
     sirket: 'Bir lojistik şirketi', pozisyon: 'Operasyon direktörü',
     davetEden: 'mert', tanidiklar: ['mert', 'ayse', 'can'], mezuniyet: 2009,
+    universite: 'Yıldız Teknik Üniversitesi', bolum: 'Lojistik', uzmanliklar: ['Tedarik zinciri', 'Operasyon'], sanatcilar: ['Tarkan', 'Dua Lipa'],
   },
   {
     id: 'elif', ad: 'Elif', soyadHarf: 'S', sehir: 'İstanbul', semt: 'Üsküdar',
@@ -97,30 +113,35 @@ export const KISILER: Kisi[] = [
     sirket: 'Bir yayınevi', pozisyon: 'Editör',
     hakkinda: 'Ayda bir kitap, yılda bir uzun yol.',
     davetEden: 'burcu', tanidiklar: ['burcu', 'deniz'], mezuniyet: 2015,
+    universite: 'Galatasaray Üniversitesi', bolum: 'Felsefe', uzmanliklar: ['Editörlük', 'Yayıncılık'], sanatcilar: ['Fazıl Say', 'Ludovico Einaudi'],
   },
   {
     id: 'can', ad: 'Can', soyadHarf: 'Y', sehir: 'İstanbul', semt: 'Sarıyer',
     ilgiler: ['doga', 'yelken', 'fotograf', 'kosu'], muzik: ['indie'],
     sirket: 'Bir enerji şirketi', pozisyon: 'Proje mühendisi',
     tanidiklar: ['selin', 'mert', 'baris'], mezuniyet: 2013,
+    universite: 'İTÜ', bolum: 'Makine Mühendisliği', uzmanliklar: ['Yenilenebilir enerji', 'Proje yönetimi'], sanatcilar: ['Bon Iver', 'Gaye Su Akyol'],
   },
   {
     id: 'deniz', ad: 'Deniz', soyadHarf: 'Ö', sehir: 'İstanbul', semt: 'Kadıköy',
     ilgiler: ['yoga', 'kitap', 'kahve', 'cocuklu'], muzik: ['caz'],
     sirket: 'Bir ilaç şirketi', pozisyon: 'İK iş ortağı',
     tanidiklar: ['ayse', 'selin', 'elif'], mezuniyet: 2008,
+    universite: 'Marmara Üniversitesi', bolum: 'Psikoloji', uzmanliklar: ['Yetenek yönetimi', 'Koçluk'], sanatcilar: ['Norah Jones', 'Kalben'],
   },
   {
     id: 'emre', ad: 'Emre', soyadHarf: 'B', sehir: 'İstanbul', semt: 'Maslak',
     ilgiler: ['teknoloji', 'padel', 'sarap', 'yemek'], muzik: ['elektronik'],
     sirket: 'Bir e-ticaret şirketi', pozisyon: 'Mühendislik müdürü',
     tanidiklar: ['mert'], mezuniyet: 2012,
+    universite: 'Sabancı Üniversitesi', bolum: 'Bilgisayar Bilimi', uzmanliklar: ['Yazılım mimarisi', 'Ekip liderliği'], sanatcilar: ['Bonobo', 'Mabel Matiz'], linkedin: 'linkedin.com/in/ornek-emre',
   },
   {
     id: 'zeynep', ad: 'Zeynep', soyadHarf: 'E', sehir: 'İzmir', semt: 'Alsancak',
     ilgiler: ['yelken', 'yemek', 'sarap', 'seyahat'], muzik: ['caz'],
     sirket: 'Bir turizm şirketi', pozisyon: 'Genel müdür yardımcısı',
     tanidiklar: ['can'], mezuniyet: 2007,
+    universite: 'Ege Üniversitesi', bolum: 'Turizm İşletmeciliği', uzmanliklar: ['Otel yönetimi', 'Müşteri deneyimi'], sanatcilar: ['Gregory Porter', 'Sezen Aksu'],
   },
 ];
 

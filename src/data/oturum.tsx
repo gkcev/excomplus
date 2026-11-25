@@ -15,6 +15,10 @@ export type Uye = Ben & {
   sirket?: string;
   hakkinda?: string;
   linkedin?: string;
+  universite?: string;
+  bolum?: string;
+  uzmanliklar?: string[];
+  sanatcilar?: string[];
   /** Profil fotografi (zorunlu). Prototipte cihazda data URI olarak saklanir. */
   foto?: string;
 };
@@ -37,6 +41,8 @@ type Durum = {
   fikirlerim: KulupFikri[];
   /** "Ben de varim" dedigim kulup onerileri */
   destekledigimFikirler: string[];
+  /** Engelledigim kisiler: mesaj ve baglanti kapali, onerilerde cikmaz */
+  engellediklerim: string[];
   /** Ev sahibi oldugum kulupler */
   evSahibiKuluplerim: string[];
   /** Ev sahibi olarak koydugum kulup bulusmalari */
@@ -52,6 +58,7 @@ const BASLANGIC: Durum = {
   fikirlerim: [],
   destekledigimFikirler: [],
   evSahibiKuluplerim: [],
+  engellediklerim: [],
   kulupPlanlari: [],
   davetKodum: '',
 };
@@ -63,6 +70,9 @@ type Baglam = Durum & {
   davetKoduKabul: (davetEden: string) => void;
   profiliKaydet: (u: Uye) => void;
   fotoDegistir: (foto: string) => void;
+  /** Profili duzenle: verilen alanlar guncellenir */
+  profiliGuncelle: (degisiklik: Partial<Uye>) => void;
+  engelle: (kisiId: string) => void;
   planaKatil: (id: string) => void;
   kulubeKatil: (id: string) => void;
   baglan: (kisiId: string) => void;
@@ -132,6 +142,8 @@ export function OturumSaglayici({ children }: { children: ReactNode }) {
             davetKodum: d.davetKodum || rastgeleKod(),
           };
         }),
+      profiliGuncelle: (degisiklik) => guncelle((d) => (d.uye ? { ...d, uye: { ...d.uye, ...degisiklik } } : d)),
+      engelle: (kisiId) => guncelle((d) => ({ ...d, engellediklerim: ekleCikar(d.engellediklerim, kisiId), baglantilar: d.baglantilar.filter((x) => x !== kisiId) })),
       fotoDegistir: (foto) => guncelle((d) => (d.uye ? { ...d, uye: { ...d.uye, foto } } : d)),
       planaKatil: (id) => guncelle((d) => ({ ...d, katildigimPlanlar: ekleCikar(d.katildigimPlanlar, id) })),
       kulubeKatil: (id) => guncelle((d) => ({ ...d, kuluplerim: ekleCikar(d.kuluplerim, id) })),

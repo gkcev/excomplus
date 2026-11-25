@@ -6,10 +6,9 @@ import { Alan } from '@/components/alan';
 import { Avatar, Cip, Dugme, Ekran, IlerlemeCubugu, Metin } from '@/components/temel';
 import { Bosluk, Colors, Kose, Marka, Yazi } from '@/constants/theme';
 import { fotoSec } from '@/data/foto';
-import { ILGI_ALANLARI, kisiBul, SEHIRLER, SEMTLER } from '@/data/ornek';
+import { ILGI_ALANLARI, MUZIK_TARZLARI, kisiBul, SEHIRLER, SEMTLER } from '@/data/ornek';
 import { useOturum } from '@/data/oturum';
 
-const MUZIK = ['caz', 'rock', 'pop', 'klasik', 'indie', 'elektronik'];
 
 /**
  * PROFIL DOLDURMA (uyenin yolculugu 3) - ZORUNLU, en fazla 3 ekran.
@@ -127,7 +126,7 @@ export default function ProfilDoldur() {
           <View style={{ gap: Bosluk.sm }}>
             <Metin style={Yazi.isim}>Müzik zevkin (isteğe bağlı)</Metin>
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
-              {MUZIK.map((m) => (
+              {MUZIK_TARZLARI.slice(0, 6).map((m) => (
                 <Cip key={m} metin={m} secili={muzik.includes(m)} onPress={() => setMuzik(degistir(muzik, m))} />
               ))}
             </View>
