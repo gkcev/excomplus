@@ -2,9 +2,9 @@ import { useLocalSearchParams } from 'expo-router';
 import { View } from 'react-native';
 
 import { Icon } from '@/components/icon';
-import { Avatar, Dugme, Ekran, IlerlemeCubugu, Kart, Metin, UstBar } from '@/components/temel';
+import { Avatar, Dugme, Ekran, IlerlemeCubugu, Kart, KulupGorseli, Metin, UstBar } from '@/components/temel';
 import { Bosluk, Colors, Kose, Marka, Yazi } from '@/constants/theme';
-import { FIKIR_ESIGI, fikirSayisi, ilgiAdi, ilgiSimge, kisiBul, KULUP_FIKIRLERI } from '@/data/ornek';
+import { FIKIR_ESIGI, fikirSayisi, ilgiAdi, kisiBul, KULUP_FIKIRLERI } from '@/data/ornek';
 import { useOturum } from '@/data/oturum';
 
 /**
@@ -48,9 +48,7 @@ export default function KulupFikri() {
         ) : undefined
       }>
       <View style={{ alignItems: 'center', gap: Bosluk.sm, marginTop: -Bosluk.md }}>
-        <View style={{ width: 88, height: 88, borderRadius: Kose.xl, backgroundColor: Marka.seftali, alignItems: 'center', justifyContent: 'center' }}>
-          <Metin style={{ fontSize: 44 }}>{ilgiSimge(f.ilgi)}</Metin>
-        </View>
+        <KulupGorseli ilgi={f.ilgi} genislik="100%" yukseklik={230} kose={Kose.xl} />
         <Metin style={{ ...Yazi.etiket, color: Colors.accent }}>ÖNERİ · {ilgiAdi(f.ilgi).toLocaleUpperCase('tr')}</Metin>
         <Metin style={{ ...Yazi.ekranBasligi, textAlign: 'center' }}>{f.ad}</Metin>
         <Metin style={{ color: Colors.textMuted, textAlign: 'center' }}>{f.aciklama}</Metin>

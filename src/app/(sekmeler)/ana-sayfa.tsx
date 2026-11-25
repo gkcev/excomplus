@@ -4,7 +4,7 @@ import { Pressable, ScrollView, View } from 'react-native';
 
 import { Icon } from '@/components/icon';
 import { KisiKarti, KulupKarti, PlanKarti } from '@/components/kartlar';
-import { Avatar, BolumBasligi, Cip, Dugme, Ekran, IlerlemeCubugu, Kart, Logo, Metin } from '@/components/temel';
+import { Avatar, BolumBasligi, Cip, Dugme, Ekran, IlerlemeCubugu, Kart, KulupGorseli, Logo, Metin } from '@/components/temel';
 import { Bosluk, Colors, Kose, Marka, Yazi } from '@/constants/theme';
 import { davetPaylas } from '@/data/davet';
 import { kisiOnerileri, planNedeni, planPuani } from '@/data/eslestirme';
@@ -92,7 +92,7 @@ export default function AnaSayfa() {
       {olusan && (
         <Kart onPress={() => router.push(`/kulup/${olusan.id}`)} style={{ padding: Bosluk.lg, gap: Bosluk.sm, backgroundColor: Marka.seftali }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: Bosluk.md }}>
-            <Metin style={{ fontSize: 32 }}>{ilgiSimge(olusan.ilgi)}</Metin>
+            <KulupGorseli ilgi={olusan.ilgi} genislik={64} yukseklik={64} />
             <View style={{ flex: 1 }}>
               <Metin style={Yazi.kartBasligi}>{olusan.ad} için {olusan.esik - olusanSayi} kişi kaldı</Metin>
               <Metin style={{ ...Yazi.ikincil, color: Colors.textMuted }}>

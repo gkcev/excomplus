@@ -20,7 +20,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Icon, type IconName } from '@/components/icon';
-import { KISI_FOTOLARI } from '@/data/fotolar';
+import { ILGI_GORSELLERI, KISI_FOTOLARI } from '@/data/fotolar';
 import { AVATAR_PASTELLERI, Bosluk, Colors, icerikOrtala, kartGolgesi, Kose, Marka, Yazi } from '@/constants/theme';
 
 /* ---------- Metin: Outfit, kalinliga gore dogru dosya ---------- */
@@ -139,6 +139,17 @@ export function Avatar({ ad, boyut = 44, id, foto }: { ad: string; boyut?: numbe
     <View style={{ width: boyut, height: boyut, borderRadius: boyut / 2, backgroundColor: zemin, alignItems: 'center', justifyContent: 'center' }}>
       <Metin style={{ fontSize: boyut * 0.36, fontWeight: '700' }}>{harfler}</Metin>
     </View>
+  );
+}
+
+/** Kulup / kulup onerisi gorseli: ilgi alaninin fotografi (emoji yok) */
+export function KulupGorseli({ ilgi, genislik, yukseklik, kose = Kose.md }: { ilgi: string; genislik: number | '100%'; yukseklik: number; kose?: number }) {
+  return (
+    <Image
+      source={ILGI_GORSELLERI[ilgi]}
+      style={{ width: genislik, height: yukseklik, borderRadius: kose, backgroundColor: Marka.seftali }}
+      contentFit="cover"
+    />
   );
 }
 

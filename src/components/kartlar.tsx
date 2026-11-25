@@ -5,11 +5,11 @@ import { router } from 'expo-router';
 import { Pressable, View } from 'react-native';
 
 import { Icon } from '@/components/icon';
-import { Avatar, AvatarYigini, Dugme, IlerlemeCubugu, Kart, Metin, Neden } from '@/components/temel';
-import { Bosluk, Colors, Durum, Kose, Marka, Yazi } from '@/constants/theme';
+import { Avatar, AvatarYigini, Dugme, IlerlemeCubugu, Kart, KulupGorseli, Metin, Neden } from '@/components/temel';
+import { Bosluk, Colors, Durum, Marka, Yazi } from '@/constants/theme';
 import type { Oneri } from '@/data/eslestirme';
 import { KISI_FOTOLARI } from '@/data/fotolar';
-import { ilgiAdi, ilgiSimge, kisiBul, type Kulup, type Plan } from '@/data/ornek';
+import { ilgiAdi, kisiBul, type Kulup, type Plan } from '@/data/ornek';
 import { useOturum } from '@/data/oturum';
 
 /** Yatay buyuk plan karti (ana sayfa "Senin icin bugun") */
@@ -86,11 +86,13 @@ export function KulupKarti({ kulup, genis }: { kulup: Kulup; genis?: boolean }) 
   return (
     <Kart
       onPress={() => router.push(`/kulup/${kulup.id}`)}
-      style={[{ padding: Bosluk.md, gap: 8 }, genis ? { flexDirection: 'row', alignItems: 'center', gap: Bosluk.md } : { width: 130 }]}>
-      <View style={{ width: 44, height: 44, borderRadius: Kose.md, backgroundColor: Marka.seftali, alignItems: 'center', justifyContent: 'center' }}>
-        <Metin style={{ fontSize: 22 }}>{ilgiSimge(kulup.ilgi)}</Metin>
-      </View>
-      <View style={{ flex: genis ? 1 : undefined, gap: 4 }}>
+      style={[genis ? { padding: Bosluk.md, flexDirection: 'row', alignItems: 'center', gap: Bosluk.md } : { width: 170, overflow: 'hidden' }]}>
+      {genis ? (
+        <KulupGorseli ilgi={kulup.ilgi} genislik={64} yukseklik={64} />
+      ) : (
+        <KulupGorseli ilgi={kulup.ilgi} genislik="100%" yukseklik={110} kose={0} />
+      )}
+      <View style={{ flex: genis ? 1 : undefined, gap: 4, padding: genis ? 0 : Bosluk.md }}>
         <Metin style={Yazi.isim} numberOfLines={1}>{kulup.ad}</Metin>
         {acik ? (
           <Metin style={{ ...Yazi.ikincil, color: Colors.textMuted }}>{sayi} üye · sohbet açık</Metin>

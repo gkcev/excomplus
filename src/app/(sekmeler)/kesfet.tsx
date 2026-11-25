@@ -3,10 +3,10 @@ import { useState } from 'react';
 import { ScrollView, View } from 'react-native';
 
 import { KulupKarti } from '@/components/kartlar';
-import { Avatar, BolumBasligi, Cip, Dugme, Ekran, IlerlemeCubugu, Kart, Metin, Neden } from '@/components/temel';
-import { Bosluk, Colors, Kose, Marka, Yazi } from '@/constants/theme';
+import { Avatar, BolumBasligi, Cip, Dugme, Ekran, IlerlemeCubugu, Kart, KulupGorseli, Metin, Neden } from '@/components/temel';
+import { Bosluk, Colors, Marka, Yazi } from '@/constants/theme';
 import { kisiOnerileri } from '@/data/eslestirme';
-import { FIKIR_ESIGI, fikirSayisi, ilgiAdi, ilgiSimge, KULUP_FIKIRLERI, KULUPLER } from '@/data/ornek';
+import { FIKIR_ESIGI, fikirSayisi, ilgiAdi, KULUP_FIKIRLERI, KULUPLER } from '@/data/ornek';
 import { useOturum } from '@/data/oturum';
 
 /** KESFET: kisiler (nedeniyle) ve tum kulupler */
@@ -65,9 +65,7 @@ export default function Kesfet() {
               const sayi = fikirSayisi(f) + (destekledigimFikirler.includes(f.id) ? 1 : 0);
               return (
                 <Kart key={f.id} onPress={() => router.push(`/kulup-fikri/${f.id}`)} style={{ padding: Bosluk.md, flexDirection: 'row', alignItems: 'center', gap: Bosluk.md }}>
-                  <View style={{ width: 44, height: 44, borderRadius: Kose.md, backgroundColor: Marka.seftali, alignItems: 'center', justifyContent: 'center' }}>
-                    <Metin style={{ fontSize: 22 }}>{ilgiSimge(f.ilgi)}</Metin>
-                  </View>
+                  <KulupGorseli ilgi={f.ilgi} genislik={64} yukseklik={64} />
                   <View style={{ flex: 1, gap: 4 }}>
                     <Metin style={Yazi.isim} numberOfLines={1}>{f.ad}</Metin>
                     <Metin style={{ ...Yazi.ikincil, color: Colors.textMuted }}>

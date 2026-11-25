@@ -1,9 +1,9 @@
 import { router } from 'expo-router';
 import { View } from 'react-native';
 
-import { Avatar, Ekran, Kart, Metin } from '@/components/temel';
-import { Bosluk, Colors, Kose, Marka, Yazi } from '@/constants/theme';
-import { ilgiSimge, kisiBul, kulupBul } from '@/data/ornek';
+import { Avatar, Ekran, Kart, KulupGorseli, Metin } from '@/components/temel';
+import { Bosluk, Colors, Marka, Yazi } from '@/constants/theme';
+import { kisiBul, kulupBul } from '@/data/ornek';
 import { useOturum } from '@/data/oturum';
 
 /** MESAJLAR: kisilerle birebir ve kulup sohbetleri */
@@ -24,9 +24,7 @@ export default function Mesajlar() {
           return (
             <Kart key={s.id} onPress={() => router.push(`/mesaj/${s.id}`)} style={{ padding: Bosluk.md, flexDirection: 'row', alignItems: 'center', gap: Bosluk.md }}>
               {kulup ? (
-                <View style={{ width: 48, height: 48, borderRadius: Kose.md, backgroundColor: Marka.seftali, alignItems: 'center', justifyContent: 'center' }}>
-                  <Metin style={{ fontSize: 22 }}>{ilgiSimge(kulup.ilgi)}</Metin>
-                </View>
+                <KulupGorseli ilgi={kulup.ilgi} genislik={48} yukseklik={48} />
               ) : (
                 <Avatar ad={ad} id={kisi?.id} boyut={48} />
               )}

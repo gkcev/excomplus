@@ -2,9 +2,9 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { View } from 'react-native';
 
 import { PlanKarti } from '@/components/kartlar';
-import { Dugme, Ekran, IlerlemeCubugu, Kart, Metin, UstBar } from '@/components/temel';
-import { Bosluk, Colors, Kose, Marka, Yazi } from '@/constants/theme';
-import { ilgiAdi, ilgiSimge, kulupBul, PLANLAR } from '@/data/ornek';
+import { Dugme, Ekran, IlerlemeCubugu, Kart, KulupGorseli, Metin, UstBar } from '@/components/temel';
+import { Bosluk, Colors, Kose, Yazi } from '@/constants/theme';
+import { ilgiAdi, kulupBul, PLANLAR } from '@/data/ornek';
 import { useOturum } from '@/data/oturum';
 
 /**
@@ -25,9 +25,7 @@ export default function KulupDetay() {
   return (
     <Ekran ust={<UstBar />}>
       <View style={{ alignItems: 'center', gap: Bosluk.sm, marginTop: -Bosluk.md }}>
-        <View style={{ width: 88, height: 88, borderRadius: Kose.xl, backgroundColor: Marka.seftali, alignItems: 'center', justifyContent: 'center' }}>
-          <Metin style={{ fontSize: 44 }}>{ilgiSimge(k.ilgi)}</Metin>
-        </View>
+        <KulupGorseli ilgi={k.ilgi} genislik="100%" yukseklik={230} kose={Kose.xl} />
         <Metin style={Yazi.ekranBasligi}>{k.ad}</Metin>
         <Metin style={{ color: Colors.textMuted, textAlign: 'center' }}>{k.aciklama}</Metin>
       </View>
