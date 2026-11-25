@@ -5,6 +5,7 @@ import { Platform, Pressable, Share, View } from 'react-native';
 import { Icon } from '@/components/icon';
 import { Avatar, Cip, Dugme, Ekran, Kart, Metin } from '@/components/temel';
 import { Bosluk, Colors, Kose, Marka, Yazi } from '@/constants/theme';
+import { fotoSec } from '@/data/foto';
 import { ilgiAdi, ilgiSimge, kisiBul, kulupBul, planBul, tamAd } from '@/data/ornek';
 import { useOturum } from '@/data/oturum';
 
@@ -31,7 +32,10 @@ export default function Profil() {
   return (
     <Ekran>
       <View style={{ alignItems: 'center', gap: Bosluk.sm }}>
-        <Avatar ad={uye.ad} id="ben" boyut={96} />
+        <Pressable onPress={async () => { const f = await fotoSec(); if (f) o.fotoDegistir(f); }} accessibilityLabel="Fotoğrafı değiştir" style={{ alignItems: 'center', gap: 6 }}>
+          <Avatar ad={uye.ad} id="ben" boyut={96} foto={uye.foto} />
+          <Metin style={{ ...Yazi.etiket, color: Colors.accent }}>{uye.foto ? 'Fotoğrafı değiştir' : 'Fotoğraf ekle'}</Metin>
+        </Pressable>
         <Metin style={Yazi.ekranBasligi}>{uye.ad}</Metin>
         {(uye.pozisyon || uye.sirket) && (
           <Metin style={{ color: Colors.textMuted }}>{[uye.pozisyon, uye.sirket].filter(Boolean).join(' · ')}</Metin>

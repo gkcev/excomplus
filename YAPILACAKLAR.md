@@ -10,7 +10,7 @@ kurallari: src/data/eslestirme.ts (strateji sunumu sayfa 8).
 - [ ] Gokce prototipi gezip yorum versin (ekran ekran)
 - [ ] Ilgi alani listesi (Yusuf cikaracak) -> ornek.ts'ye islenecek
 - [ ] Ilk kulupler ve esik sayisi (sunumdaki acik soru: kulup esigi kac kisi?)
-- [ ] Fotograf: profil fotografi yukleme (ExCom'dan kopyalanacak)
+- [x] Fotograf: profilde zorunlu (1. adim), profilden degistirilebilir. Gercek yukleme (Supabase storage) veritabaniyla gelecek
 - [ ] Bildirimler ekrani (zil simdilik bos)
 - [ ] Plus'a ozel yeni ozellikler: liste bekleniyor
 

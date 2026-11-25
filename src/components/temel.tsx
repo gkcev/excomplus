@@ -120,7 +120,10 @@ export function Cip({
 
 /* ---------- Avatar: bas harfli pastel daire (prototipte foto yok) ---------- */
 
-export function Avatar({ ad, boyut = 44, id }: { ad: string; boyut?: number; id?: string }) {
+export function Avatar({ ad, boyut = 44, id, foto }: { ad: string; boyut?: number; id?: string; foto?: string }) {
+  if (foto) {
+    return <Image source={{ uri: foto }} style={{ width: boyut, height: boyut, borderRadius: boyut / 2 }} contentFit="cover" />;
+  }
   const anahtar = (id ?? ad).split('').reduce((t, c) => t + c.charCodeAt(0), 0);
   const zemin = AVATAR_PASTELLERI[anahtar % AVATAR_PASTELLERI.length];
   const harfler = ad

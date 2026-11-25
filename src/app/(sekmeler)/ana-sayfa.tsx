@@ -41,7 +41,7 @@ export default function AnaSayfa() {
             <View style={{ position: 'absolute', top: 0, right: 0, width: 8, height: 8, borderRadius: 4, backgroundColor: Marka.turuncu }} />
           </Pressable>
           <Pressable onPress={() => router.navigate('/profil')} accessibilityLabel="Profilim">
-            <Avatar ad={uye.ad} boyut={40} id="ben" />
+            <Avatar ad={uye.ad} boyut={40} id="ben" foto={uye.foto} />
           </Pressable>
         </View>
       </View>

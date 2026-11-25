@@ -3,8 +3,9 @@ import { useState } from 'react';
 import { Pressable, View } from 'react-native';
 
 import { Alan } from '@/components/alan';
-import { Cip, Dugme, Ekran, IlerlemeCubugu, Metin } from '@/components/temel';
+import { Avatar, Cip, Dugme, Ekran, IlerlemeCubugu, Metin } from '@/components/temel';
 import { Bosluk, Colors, Kose, Marka, Yazi } from '@/constants/theme';
+import { fotoSec } from '@/data/foto';
 import { ILGI_ALANLARI, kisiBul, SEHIRLER, SEMTLER } from '@/data/ornek';
 import { useOturum } from '@/data/oturum';
 
@@ -12,7 +13,7 @@ const MUZIK = ['caz', 'rock', 'pop', 'klasik', 'indie', 'elektronik'];
 
 /**
  * PROFIL DOLDURMA (uyenin yolculugu 3) - ZORUNLU, en fazla 3 ekran.
- *  1. Ad soyad (zorunlu), is (istege bagli)
+ *  1. Fotograf + ad soyad (zorunlu), is (istege bagli)
  *  2. Ilgi alanlari: en az 3 (eslestirmede en guclu isaret), muzik istege bagli
  *  3. Sehir + semt (zorunlu), mezuniyet yili (istege bagli, gosterilmez)
  * Medeni durum sorulmaz, dogum yili sorulmaz.
@@ -21,6 +22,7 @@ export default function ProfilDoldur() {
   const { davetEden, uye, profiliKaydet } = useOturum();
   const [adim, setAdim] = useState(1);
   const [ad, setAd] = useState('');
+  const [foto, setFoto] = useState<string>();
   const [is, setIs] = useState('');
   const [ilgiler, setIlgiler] = useState<string[]>([]);
   const [muzik, setMuzik] = useState<string[]>([]);
@@ -33,13 +35,14 @@ export default function ProfilDoldur() {
   const davetci = kisiBul(davetEden);
 
   const degistir = (liste: string[], id: string) => (liste.includes(id) ? liste.filter((x) => x !== id) : [...liste, id]);
-  const gecerli = adim === 1 ? ad.trim().length > 2 : adim === 2 ? ilgiler.length >= 3 : !!sehir && !!semt;
+  const gecerli = adim === 1 ? !!foto && ad.trim().length > 2 : adim === 2 ? ilgiler.length >= 3 : !!sehir && !!semt;
 
   const ileri = () => {
     if (adim < 3) return setAdim(adim + 1);
     const [pozisyon, ...sirketParca] = is.split(',').map((x) => x.trim());
     profiliKaydet({
       ad: ad.trim(),
+      foto,
       sehir,
       semt,
       ilgiler,
@@ -87,14 +90,26 @@ export default function ProfilDoldur() {
               </Metin>
             )}
           </View>
+          <Pressable
+            onPress={async () => { const f = await fotoSec(); if (f) setFoto(f); }}
+            accessibilityLabel="Profil fotoğrafı seç"
+            style={{ flexDirection: 'row', alignItems: 'center', gap: Bosluk.md, padding: Bosluk.lg, borderRadius: Kose.lg, backgroundColor: Marka.seftali }}>
+            {foto ? (
+              <Avatar ad={ad || '?'} foto={foto} boyut={64} />
+            ) : (
+              <View style={{ width: 64, height: 64, borderRadius: 32, backgroundColor: Colors.white, alignItems: 'center', justifyContent: 'center' }}>
+                <Metin style={{ fontSize: 26 }}>📷</Metin>
+              </View>
+            )}
+            <View style={{ flex: 1, gap: 2 }}>
+              <Metin style={Yazi.isim}>{foto ? 'Fotoğrafın hazır' : 'Profil fotoğrafı ekle'}</Metin>
+              <Metin style={{ ...Yazi.ikincil, color: Colors.textMuted }}>
+                {foto ? 'Değiştirmek için dokun. Sonra profilinden de değiştirebilirsin.' : 'Zorunlu. Yüzünün göründüğü bir fotoğraf seç; istediğin zaman değiştirebilirsin.'}
+              </Metin>
+            </View>
+          </Pressable>
           <Alan etiket="Ad soyad" deger={ad} degis={setAd} ipucu="Adın ve soyadın" />
           <Alan etiket="Pozisyon, şirket (isteğe bağlı)" deger={is} degis={setIs} ipucu="Örn. Ürün yöneticisi, bir banka" />
-          <View style={{ padding: Bosluk.lg, borderRadius: Kose.lg, backgroundColor: Marka.seftali, gap: 4 }}>
-            <Metin style={Yazi.isim}>📷 Fotoğraf önerilir</Metin>
-            <Metin style={{ ...Yazi.ikincil, color: Colors.textMuted }}>
-              Fotoğraflı profiller daha çok tanışma isteği alıyor. Sonra profilinden ekleyebilirsin.
-            </Metin>
-          </View>
         </>
       )}
 

@@ -69,7 +69,7 @@ export default function EtkinlikDetay() {
         })}
         {katildim && (
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: Bosluk.md }}>
-            <Avatar ad={uye.ad} id="ben" boyut={40} />
+            <Avatar ad={uye.ad} id="ben" boyut={40} foto={uye.foto} />
             <Metin style={Yazi.isim}>Sen</Metin>
           </View>
         )}

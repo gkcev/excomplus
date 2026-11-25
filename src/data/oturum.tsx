@@ -15,6 +15,8 @@ export type Uye = Ben & {
   sirket?: string;
   hakkinda?: string;
   linkedin?: string;
+  /** Profil fotografi (zorunlu). Prototipte cihazda data URI olarak saklanir. */
+  foto?: string;
 };
 
 type Durum = {
@@ -48,6 +50,7 @@ type Baglam = Durum & {
   hazir: boolean;
   davetKoduKabul: (davetEden: string) => void;
   profiliKaydet: (u: Uye) => void;
+  fotoDegistir: (foto: string) => void;
   planaKatil: (id: string) => void;
   kulubeKatil: (id: string) => void;
   baglan: (kisiId: string) => void;
@@ -106,6 +109,7 @@ export function OturumSaglayici({ children }: { children: ReactNode }) {
             davetKodum: d.davetKodum || rastgeleKod(),
           };
         }),
+      fotoDegistir: (foto) => guncelle((d) => (d.uye ? { ...d, uye: { ...d.uye, foto } } : d)),
       planaKatil: (id) => guncelle((d) => ({ ...d, katildigimPlanlar: ekleCikar(d.katildigimPlanlar, id) })),
       kulubeKatil: (id) => guncelle((d) => ({ ...d, kuluplerim: ekleCikar(d.kuluplerim, id) })),
       baglan: (kisiId) =>
