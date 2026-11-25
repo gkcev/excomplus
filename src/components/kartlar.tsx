@@ -13,12 +13,45 @@ import { KISI_FOTOLARI } from '@/data/fotolar';
 import { ilgiAdi, kisiBul, type Kulup, type Plan } from '@/data/ornek';
 import { useOturum } from '@/data/oturum';
 
-/** Yatay buyuk plan karti (ana sayfa "Senin icin bugun") */
-export function PlanKarti({ plan, neden }: { plan: Plan; neden?: string | null }) {
+/**
+ * Plan karti.
+ *  vitrin (varsayilan): baslik fotografin ustunde; ana sayfada tek kart icin.
+ *  yan: solda %40 fotograf, sagda bilgi; uzun listeler icin (daha cok kart sigar).
+ */
+export function PlanKarti({ plan, neden, tur = 'vitrin' }: { plan: Plan; neden?: string | null; tur?: 'vitrin' | 'yan' }) {
   const { katildigimPlanlar, planaKatil } = useOturum();
   const katildim = katildigimPlanlar.includes(plan.id);
   const adlar = plan.katilan.map((k) => kisiBul(k)?.ad ?? '');
   const toplam = plan.katilan.length + (katildim ? 1 : 0);
+  const katilDugmesi = (
+    <Dugme kucuk baslik={katildim ? 'Katılıyorsun' : 'Katıl'} tur={katildim ? 'hafif' : 'turuncu'} ikon={katildim ? 'check' : undefined} onPress={() => planaKatil(plan.id)} />
+  );
+
+  if (tur === 'yan') {
+    return (
+      <Kart onPress={() => router.push(`/etkinlik/${plan.id}`)} style={{ flexDirection: 'row', overflow: 'hidden', minHeight: 150 }}>
+        <View style={{ width: '40%' }}>
+          <Image source={plan.gorsel} style={StyleSheet.absoluteFill} contentFit="cover" />
+          <View style={{ position: 'absolute', top: 8, left: 8, backgroundColor: 'rgba(255,255,255,0.92)', borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2 }}>
+            <Metin style={{ ...Yazi.etiket, fontSize: 11, color: Colors.accent }}>{plan.tur}</Metin>
+          </View>
+        </View>
+        <View style={{ flex: 1, padding: Bosluk.md, gap: 4 }}>
+          <Metin style={Yazi.isim} numberOfLines={2}>{plan.baslik}</Metin>
+          <Metin style={{ ...Yazi.ikincil, color: Colors.textMuted }} numberOfLines={1}>{plan.gun} · {plan.saat}</Metin>
+          <Metin style={{ ...Yazi.ikincil, color: Colors.textMuted }} numberOfLines={1}>{plan.semt}</Metin>
+          {neden && (
+            <Metin style={{ ...Yazi.etiket, color: Colors.accent }} numberOfLines={1}>{neden}</Metin>
+          )}
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto', paddingTop: 6 }}>
+            <AvatarYigini adlar={adlar} idler={plan.katilan} toplam={toplam} />
+            {katilDugmesi}
+          </View>
+        </View>
+      </Kart>
+    );
+  }
+
   return (
     <Kart onPress={() => router.push(`/etkinlik/${plan.id}`)} style={{ overflow: 'hidden' }}>
       {/* Fotograf: baslik ve tarih ustunde, alttan koyulasan gecisle okunur */}
@@ -41,7 +74,7 @@ export function PlanKarti({ plan, neden }: { plan: Plan; neden?: string | null }
           {neden && <Neden metin={neden} />}
           <AvatarYigini adlar={adlar} idler={plan.katilan} toplam={toplam} />
         </View>
-        <Dugme kucuk baslik={katildim ? 'Katılıyorsun' : 'Katıl'} tur={katildim ? 'hafif' : 'turuncu'} ikon={katildim ? 'check' : undefined} onPress={() => planaKatil(plan.id)} />
+        {katilDugmesi}
       </View>
     </Kart>
   );

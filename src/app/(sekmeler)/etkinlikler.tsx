@@ -37,7 +37,7 @@ export default function Etkinlikler() {
       </ScrollView>
       <View style={{ gap: Bosluk.md }}>
         {liste.map((p) => (
-          <PlanKarti key={p.id} plan={p} neden={planNedeni(uye!, p)} />
+          <PlanKarti key={p.id} plan={p} neden={planNedeni(uye!, p)} tur="yan" />
         ))}
         {liste.length === 0 && (
           <Metin style={{ color: Colors.textMuted, textAlign: 'center', paddingVertical: Bosluk.xl }}>

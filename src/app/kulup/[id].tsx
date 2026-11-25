@@ -70,7 +70,7 @@ export default function KulupDetay() {
         <View style={{ gap: Bosluk.md }}>
           <Metin style={Yazi.bolumBasligi}>Yaklaşan buluşmalar</Metin>
           {planlar.map((p) => (
-            <PlanKarti key={p.id} plan={p} />
+            <PlanKarti key={p.id} plan={p} tur="yan" />
           ))}
         </View>
       )}
