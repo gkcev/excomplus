@@ -19,6 +19,11 @@ Uzak depo: `origin` -> github.com/gkcev/excomplus (ozel), dal `main`.
 
 Yeni bir makinede ise baslamadan once `git pull`.
 
+## Yayin (arkadaslara link)
+Web surumu EAS Hosting'de: https://excomplus.expo.app
+Yeniden yayinlamak: `npm run yayinla` (Expo hesabi: gkcevi). Link herkese
+acik; prototipte veriler her kisinin kendi tarayicisinda tutulur.
+
 ## Bekleyen isler
 Acik basliklar ve ExCom'dan kopyalanacak ozellikler YAPILACAKLAR.md
 icinde. Ise baslamadan once ona bak.
