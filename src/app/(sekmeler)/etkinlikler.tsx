@@ -61,14 +61,14 @@ export default function Etkinlikler() {
       </View>
       {/* Aylik takvim: dugmeyle acilir, gun secince kapanir */}
       {takvimAcik && (
-      <Kart style={{ padding: Bosluk.md, gap: Bosluk.sm, marginTop: -Bosluk.sm }}>
+      <Kart style={{ paddingHorizontal: Bosluk.sm, paddingVertical: 10, gap: 4, marginTop: -Bosluk.sm }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
           <Pressable onPress={() => ayDegistir(-1)} hitSlop={10} accessibilityLabel="Önceki ay" style={{ padding: 4, transform: [{ scaleX: -1 }] }}>
-            <Icon name="chevron-right" size={20} color={Colors.text} />
+            <Icon name="chevron-right" size={18} color={Colors.text} />
           </Pressable>
-          <Metin style={Yazi.kartBasligi}>{ayAdi(new Date(ay.yil, ay.ay, 1))} {ay.yil}</Metin>
+          <Metin style={Yazi.isim}>{ayAdi(new Date(ay.yil, ay.ay, 1))} {ay.yil}</Metin>
           <Pressable onPress={() => ayDegistir(1)} hitSlop={10} accessibilityLabel="Sonraki ay" style={{ padding: 4 }}>
-            <Icon name="chevron-right" size={20} color={Colors.text} />
+            <Icon name="chevron-right" size={18} color={Colors.text} />
           </Pressable>
         </View>
         <View style={{ flexDirection: 'row' }}>
@@ -78,13 +78,13 @@ export default function Etkinlikler() {
         </View>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
           {izgara.map((d, i) => {
-            if (!d) return <View key={i} style={{ width: `${100 / 7}%`, height: 46 }} />;
+            if (!d) return <View key={i} style={{ width: `${100 / 7}%`, height: 32 }} />;
             const sec = !!secili && ayniGun(d, secili);
             const bugunMu = ayniGun(d, bugun);
             const eski = gecmis(d);
             const sayi = eski ? 0 : gununPlanlari(d).length;
             return (
-              <View key={i} style={{ width: `${100 / 7}%`, height: 46, alignItems: 'center', justifyContent: 'center' }}>
+              <View key={i} style={{ width: `${100 / 7}%`, height: 32, alignItems: 'center', justifyContent: 'center' }}>
                 <Pressable
                   onPress={() => {
                     setSecili(sec ? null : d);
@@ -95,15 +95,15 @@ export default function Etkinlikler() {
                   accessibilityLabel={`${uzunTarih(d)}, ${sayi} etkinlik`}
                   accessibilityState={{ selected: sec, disabled: eski }}
                   style={{
-                    width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center',
+                    width: 30, height: 30, borderRadius: 15, alignItems: 'center', justifyContent: 'center',
                     backgroundColor: sec ? Marka.turuncu : 'transparent',
                     borderWidth: bugunMu && !sec ? 1.5 : 0, borderColor: Marka.turuncu,
                   }}>
-                  <Metin style={{ fontSize: 15, fontWeight: sayi ? '700' : '400', color: sec ? Colors.white : eski ? Colors.textFaint : Colors.text }}>
+                  <Metin style={{ fontSize: 13, fontWeight: sayi ? '700' : '400', color: sec ? Colors.white : eski ? Colors.textFaint : Colors.text }}>
                     {d.getDate()}
                   </Metin>
                   {sayi > 0 && (
-                    <View style={{ position: 'absolute', bottom: 4, width: 5, height: 5, borderRadius: 3, backgroundColor: sec ? Colors.white : Marka.turuncu }} />
+                    <View style={{ position: 'absolute', bottom: 2, width: 4, height: 4, borderRadius: 3, backgroundColor: sec ? Colors.white : Marka.turuncu }} />
                   )}
                 </Pressable>
               </View>
