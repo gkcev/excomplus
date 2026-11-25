@@ -8,6 +8,7 @@ import { Icon } from '@/components/icon';
 import { Avatar, AvatarYigini, Dugme, IlerlemeCubugu, Kart, Metin, Neden } from '@/components/temel';
 import { Bosluk, Colors, Durum, Kose, Marka, Yazi } from '@/constants/theme';
 import type { Oneri } from '@/data/eslestirme';
+import { KISI_FOTOLARI } from '@/data/fotolar';
 import { ilgiAdi, ilgiSimge, kisiBul, type Kulup, type Plan } from '@/data/ornek';
 import { useOturum } from '@/data/oturum';
 
@@ -18,19 +19,21 @@ export function PlanKarti({ plan, neden }: { plan: Plan; neden?: string | null }
   const adlar = plan.katilan.map((k) => kisiBul(k)?.ad ?? '');
   const toplam = plan.katilan.length + (katildim ? 1 : 0);
   return (
-    <Kart onPress={() => router.push(`/etkinlik/${plan.id}`)} style={{ flexDirection: 'row', overflow: 'hidden' }}>
-      <Image source={plan.gorsel} style={{ width: 120, minHeight: 150 }} contentFit="cover" />
-      <View style={{ flex: 1, padding: Bosluk.md, gap: 6 }}>
-        <View style={{ alignSelf: 'flex-start', backgroundColor: Marka.seftali, borderRadius: 6, paddingHorizontal: 8, paddingVertical: 2 }}>
+    <Kart onPress={() => router.push(`/etkinlik/${plan.id}`)} style={{ overflow: 'hidden' }}>
+      <View>
+        <Image source={plan.gorsel} style={{ width: '100%', height: 190 }} contentFit="cover" />
+        <View style={{ position: 'absolute', top: Bosluk.md, left: Bosluk.md, backgroundColor: Colors.white, borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4 }}>
           <Metin style={{ ...Yazi.etiket, color: Colors.accent }}>{plan.tur}</Metin>
         </View>
+      </View>
+      <View style={{ padding: Bosluk.lg, gap: 6 }}>
         <Metin style={Yazi.kartBasligi} numberOfLines={2}>{plan.baslik}</Metin>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
           <Icon name="calendar" size={13} color={Colors.textMuted} />
           <Metin style={{ ...Yazi.ikincil, color: Colors.textMuted }}>{plan.gun} · {plan.saat} · {plan.semt}</Metin>
         </View>
         {neden && <Neden metin={neden} />}
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto' }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 4 }}>
           <AvatarYigini adlar={adlar} idler={plan.katilan} toplam={toplam} />
           <Dugme kucuk baslik={katildim ? 'Katılıyorsun' : 'Katıl'} tur={katildim ? 'hafif' : 'turuncu'} ikon={katildim ? 'check' : undefined} onPress={() => planaKatil(plan.id)} />
         </View>
@@ -45,16 +48,23 @@ export function KisiKarti({ oneri }: { oneri: Oneri }) {
   const k = oneri.kisi;
   const bagli = baglantilar.includes(k.id);
   return (
-    <Kart onPress={() => router.push(`/kisi/${k.id}`)} style={{ width: 150, padding: Bosluk.md, gap: 8 }}>
-      <View style={{ alignItems: 'center' }}>
-        <Avatar ad={`${k.ad} ${k.soyadHarf}`} id={k.id} boyut={72} />
+    <Kart onPress={() => router.push(`/kisi/${k.id}`)} style={{ width: 170, overflow: 'hidden' }}>
+      <View>
+        {KISI_FOTOLARI[k.id] ? (
+          <Image source={KISI_FOTOLARI[k.id]} style={{ width: '100%', height: 190 }} contentFit="cover" />
+        ) : (
+          <View style={{ height: 190, alignItems: 'center', justifyContent: 'center', backgroundColor: Marka.seftali }}>
+            <Avatar ad={`${k.ad} ${k.soyadHarf}`} id={k.id} boyut={88} />
+          </View>
+        )}
         <Pressable
           accessibilityLabel={bagli ? 'İstek gönderildi' : `${k.ad} ile tanış`}
           onPress={() => baglan(k.id)}
-          style={{ position: 'absolute', right: 18, bottom: -4, width: 28, height: 28, borderRadius: 14, backgroundColor: bagli ? Durum.onaylandi.zemin : Marka.turuncu, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: Colors.white }}>
-          <Icon name={bagli ? 'check' : 'plus'} size={14} color={bagli ? Durum.onaylandi.yazi : Colors.white} strokeWidth={3} />
+          style={{ position: 'absolute', right: 10, bottom: 10, width: 36, height: 36, borderRadius: 18, backgroundColor: bagli ? Durum.onaylandi.zemin : Marka.turuncu, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: Colors.white }}>
+          <Icon name={bagli ? 'check' : 'plus'} size={16} color={bagli ? Durum.onaylandi.yazi : Colors.white} strokeWidth={3} />
         </Pressable>
       </View>
+      <View style={{ padding: Bosluk.md, gap: 8 }}>
       <View>
         <Metin style={Yazi.isim}>{k.ad} {k.soyadHarf}.</Metin>
         <Metin style={{ ...Yazi.ikincil, color: Colors.textMuted }} numberOfLines={1}>
@@ -62,6 +72,7 @@ export function KisiKarti({ oneri }: { oneri: Oneri }) {
         </Metin>
       </View>
       {oneri.nedenler[0] && <Neden metin={oneri.nedenler[0]} />}
+      </View>
     </Kart>
   );
 }

@@ -23,7 +23,7 @@ export default function KisiProfili() {
   return (
     <Ekran ust={<UstBar />}>
       <View style={{ alignItems: 'center', gap: Bosluk.sm, marginTop: -Bosluk.md }}>
-        <Avatar ad={`${k.ad} ${k.soyadHarf}`} id={k.id} boyut={96} />
+        <Avatar ad={`${k.ad} ${k.soyadHarf}`} id={k.id} boyut={150} />
         <Metin style={Yazi.ekranBasligi}>{tamAd(k)}</Metin>
         <Metin style={{ color: Colors.textMuted }}>{k.pozisyon} · {k.sirket}</Metin>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>

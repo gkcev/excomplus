@@ -33,7 +33,7 @@ export default function Kesfet() {
           </Metin>
           {oneriler.map((o) => (
             <Kart key={o.kisi.id} onPress={() => router.push(`/kisi/${o.kisi.id}`)} style={{ padding: Bosluk.lg, flexDirection: 'row', gap: Bosluk.md }}>
-              <Avatar ad={`${o.kisi.ad} ${o.kisi.soyadHarf}`} id={o.kisi.id} boyut={52} />
+              <Avatar ad={`${o.kisi.ad} ${o.kisi.soyadHarf}`} id={o.kisi.id} boyut={76} />
               <View style={{ flex: 1, gap: 4 }}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                   <Metin style={Yazi.isim}>{o.kisi.ad} {o.kisi.soyadHarf}.</Metin>

@@ -13,7 +13,7 @@ import { useOturum } from '@/data/oturum';
  */
 export default function KulupDetay() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { kuluplerim, kulubeKatil } = useOturum();
+  const { uye, kuluplerim, kulubeKatil } = useOturum();
   const k = kulupBul(id);
   if (!k) return <Ekran ust={<UstBar />}><Metin>Kulüp bulunamadı.</Metin></Ekran>;
 
@@ -47,6 +47,11 @@ export default function KulupDetay() {
             <Metin style={{ ...Yazi.ikincil, color: Colors.textMuted }}>
               {ilgiAdi(k.ilgi)} seven {k.esik - sayi} kişi daha katılınca kulüp ve sohbeti açılır. Açıldığında haber vereceğiz.
             </Metin>
+            {uyeyim && uye?.ilgiler.includes(k.ilgi) && (
+              <Metin style={{ ...Yazi.ikincil, color: Colors.accent }}>
+                İlgi alanlarında {ilgiAdi(k.ilgi).toLocaleLowerCase('tr')} olduğu için seni bekleme listesine ekledik.
+              </Metin>
+            )}
           </>
         )}
         {uyeyim && acik ? (

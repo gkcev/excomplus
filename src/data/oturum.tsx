@@ -8,7 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 
 import type { Ben } from '@/data/eslestirme';
-import { kisiBul, SOHBETLER, type KulupFikri, type Sohbet } from '@/data/ornek';
+import { kisiBul, KULUPLER, SOHBETLER, type KulupFikri, type Sohbet } from '@/data/ornek';
 
 export type Uye = Ben & {
   pozisyon?: string;
@@ -115,6 +115,8 @@ export function OturumSaglayici({ children }: { children: ReactNode }) {
             ...d,
             uye: { ...u, davetEden: d.davetEden, tanidiklar },
             baglantilar: davetci ? [davetci.id] : [],
+            // Ilgi secmek = o kulubun bekleme listesine girmek (ayrica bir sey yapmasi gerekmez)
+            kuluplerim: KULUPLER.filter((k) => u.ilgiler.includes(k.ilgi)).map((k) => k.id),
             davetKodum: d.davetKodum || rastgeleKod(),
           };
         }),

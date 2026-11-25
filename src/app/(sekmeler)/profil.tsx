@@ -1,10 +1,11 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { Platform, Pressable, Share, View } from 'react-native';
+import { Platform, Pressable, View } from 'react-native';
 
 import { Icon } from '@/components/icon';
 import { Avatar, Cip, Dugme, Ekran, Kart, Metin } from '@/components/temel';
 import { Bosluk, Colors, Kose, Marka, Yazi } from '@/constants/theme';
+import { davetPaylas } from '@/data/davet';
 import { fotoSec } from '@/data/foto';
 import { ilgiAdi, ilgiSimge, kisiBul, kulupBul, planBul, tamAd } from '@/data/ornek';
 import { useOturum } from '@/data/oturum';
@@ -17,16 +18,10 @@ export default function Profil() {
   const [kopyalandi, setKopyalandi] = useState(false);
 
   const davetEt = async () => {
-    const metin = `Seni ExCom Plus'a davet ediyorum. Davet kodun: ${o.davetKodum}`;
-    try {
-      if (Platform.OS === 'web') {
-        await navigator.clipboard?.writeText(metin);
-        setKopyalandi(true);
-      } else {
-        await Share.share({ message: metin });
-      }
+    if (await davetPaylas(o.davetKodum)) {
+      if (Platform.OS === 'web') setKopyalandi(true);
       o.davetiKullan();
-    } catch {}
+    }
   };
 
   return (

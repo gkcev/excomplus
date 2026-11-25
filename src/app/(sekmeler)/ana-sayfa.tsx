@@ -1,10 +1,12 @@
 import { router } from 'expo-router';
+import { useState } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
 
 import { Icon } from '@/components/icon';
 import { KisiKarti, KulupKarti, PlanKarti } from '@/components/kartlar';
 import { Avatar, BolumBasligi, Cip, Dugme, Ekran, IlerlemeCubugu, Kart, Logo, Metin } from '@/components/temel';
 import { Bosluk, Colors, Kose, Marka, Yazi } from '@/constants/theme';
+import { davetPaylas } from '@/data/davet';
 import { kisiOnerileri, planNedeni, planPuani } from '@/data/eslestirme';
 import { ilgiAdi, ilgiSimge, KULUPLER, PLANLAR } from '@/data/ornek';
 import { useOturum } from '@/data/oturum';
@@ -24,10 +26,13 @@ export default function AnaSayfa() {
   const oneCikan = planlar[0]?.p;
   const oneriler = kisiOnerileri(uye, 3, uye.davetEden ? [uye.davetEden] : []);
   const kulupler = KULUPLER.filter((k) => uye.ilgiler.includes(k.ilgi));
-  // Esige en yakin, henuz acilmamis kulup: "Tenis grubu olusuyor"
+  // Bekleme listesinde oldugum, esige en yakin, henuz acilmamis kulup: "Tenis kulubunun acilmasina 2 kisi kaldi"
+  const sayiOf = (k: (typeof kulupler)[number]) => k.uyeler.length + (oturum.kuluplerim.includes(k.id) ? 1 : 0);
   const olusan = kulupler
-    .filter((k) => k.uyeler.length < k.esik && !oturum.kuluplerim.includes(k.id))
-    .sort((a, b) => b.uyeler.length / b.esik - a.uyeler.length / a.esik)[0];
+    .filter((k) => oturum.kuluplerim.includes(k.id) && sayiOf(k) < k.esik)
+    .sort((a, b) => sayiOf(b) - sayiOf(a))[0];
+  const olusanSayi = olusan ? sayiOf(olusan) : 0;
+  const [davetKopyalandi, setDavetKopyalandi] = useState(false);
   const ayinEtkinligi = PLANLAR.find((p) => p.ayinEtkinligi);
 
   return (
@@ -83,25 +88,38 @@ export default function AnaSayfa() {
         </View>
       )}
 
-      {/* Olusan kulup */}
+      {/* Olusan kulup: davet ederek hizlandir */}
       {olusan && (
         <Kart onPress={() => router.push(`/kulup/${olusan.id}`)} style={{ padding: Bosluk.lg, gap: Bosluk.sm, backgroundColor: Marka.seftali }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: Bosluk.md }}>
             <Metin style={{ fontSize: 32 }}>{ilgiSimge(olusan.ilgi)}</Metin>
             <View style={{ flex: 1 }}>
-              <Metin style={Yazi.kartBasligi}>{olusan.ad} oluşuyor!</Metin>
+              <Metin style={Yazi.kartBasligi}>{olusan.ad} için {olusan.esik - olusanSayi} kişi kaldı</Metin>
               <Metin style={{ ...Yazi.ikincil, color: Colors.textMuted }}>
-                {ilgiAdi(olusan.ilgi)} seven {olusan.uyeler.length} kişi var. {olusan.esik} kişi olunca kulüp ve sohbeti açılır.
+                Bekleme listesindesin. {olusan.esik} kişi olunca kulüp ve sohbeti açılır. {ilgiAdi(olusan.ilgi)} seven bir tanıdığını davet et, daha hızlı açılsın.
               </Metin>
             </View>
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: Bosluk.md }}>
             <View style={{ flex: 1 }}>
-              <IlerlemeCubugu oran={olusan.uyeler.length / olusan.esik} />
+              <IlerlemeCubugu oran={olusanSayi / olusan.esik} />
             </View>
-            <Metin style={Yazi.etiket}>{olusan.uyeler.length} / {olusan.esik}</Metin>
+            <Metin style={Yazi.etiket}>{olusanSayi} / {olusan.esik}</Metin>
           </View>
-          <Dugme kucuk baslik="Ben de varım" tur="turuncu" style={{ alignSelf: 'flex-start' }} onPress={() => oturum.kulubeKatil(olusan.id)} />
+          <Dugme
+            kucuk
+            baslik={davetKopyalandi ? 'Davet metni kopyalandı' : 'Tanıdığını davet et'}
+            ikon={davetKopyalandi ? 'check' : 'gift'}
+            tur={davetKopyalandi ? 'hafif' : 'turuncu'}
+            style={{ alignSelf: 'flex-start' }}
+            pasif={oturum.davetHakki === 0 && !davetKopyalandi}
+            onPress={async () => {
+              if (await davetPaylas(oturum.davetKodum, `${olusan.ad} açılmak üzere, sen de gel!`)) {
+                setDavetKopyalandi(true);
+                oturum.davetiKullan();
+              }
+            }}
+          />
         </Kart>
       )}
 

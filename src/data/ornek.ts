@@ -226,17 +226,31 @@ export type Kulup = {
   aciklama: string;
 };
 
-/** Kulupler: ayni ilgiyi secenler esige ulasinca kulup ve sohbeti acilir */
-export const KULUPLER: Kulup[] = [
-  { id: 'tenis', ad: 'Tenis Kulübü', ilgi: 'tenis', uyeler: ['selin', 'baris'], esik: 10, aciklama: 'Hafta içi iş çıkışı ve hafta sonu sabah maçları.' },
-  { id: 'sergi', ad: 'Sergi Gezenler', ilgi: 'sergi', uyeler: ['ayse', 'selin', 'burcu', 'elif', 'a1', 'a2', 'a3', 'a4', 'a5', 'a6', 'a7', 'a8', 'a9', 'a10'], esik: 10, aciklama: 'Ayda iki sergi, sonrasında sohbet.' },
-  { id: 'kitap', ad: 'Kitap Kulübü', ilgi: 'kitap', uyeler: ['elif', 'deniz', 'ayse', 'b1', 'b2', 'b3', 'b4', 'b5', 'b6', 'b7', 'b8', 'b9'], esik: 10, aciklama: 'Ayın kitabı, ayda bir buluşma.' },
-  { id: 'kosu', ad: 'Koşu Grubu', ilgi: 'kosu', uyeler: ['mert', 'can', 'c1', 'c2', 'c3', 'c4'], esik: 10, aciklama: 'Pazar sabahları sahilde.' },
-  { id: 'padel', ad: 'Padel Ekibi', ilgi: 'padel', uyeler: ['baris', 'emre', 'd1'], esik: 8, aciklama: 'Dörtlü maçlar, seviye fark etmez.' },
-  { id: 'yemek', ad: 'Şefin Masası', ilgi: 'yemek', uyeler: ['elif', 'emre', 'zeynep', 'e1', 'e2', 'e3', 'e4', 'e5', 'e6', 'e7', 'e8'], esik: 10, aciklama: 'Ayda bir şefin masasında akşam yemeği.' },
-  { id: 'fotograf', ad: 'Foto Yürüyüşü', ilgi: 'fotograf', uyeler: ['selin', 'burcu', 'can', 'f1', 'f2'], esik: 10, aciklama: 'Şehirde fotoğraf yürüyüşleri.' },
-  { id: 'teknoloji', ad: 'Teknoloji Sohbetleri', ilgi: 'teknoloji', uyeler: ['mert', 'emre', 'g1', 'g2', 'g3', 'g4', 'g5', 'g6', 'g7', 'g8', 'g9', 'g10', 'g11'], esik: 10, aciklama: 'Ayda bir konu, bir konuşmacı.' },
+/**
+ * Kulup esigi: bu kadar kisi olunca kulup ve sohbeti acilir.
+ * Baslangicta dusuk (5); uye sayisi artinca yukseltilir, sehre gore bolunur.
+ */
+export const KULUP_ESIGI = 5;
+
+/** Bir ilgiyi profilinde secen uyeler. Ilgi secmek = o kulubun bekleme listesine girmek. */
+const ilgiyiSecenler = (ilgi: string) => KISILER.filter((k) => k.ilgiler.includes(ilgi)).map((k) => k.id);
+
+/**
+ * Tohum kulupler: acilista ekip acar, hepsi "Toplaniyor" durumunda baslar.
+ * Uyeleri elle yazilmaz; o ilgiyi secenlerden hesaplanir.
+ */
+const TOHUM_KULUPLER: Omit<Kulup, 'uyeler' | 'esik'>[] = [
+  { id: 'tenis', ad: 'Tenis Kulübü', ilgi: 'tenis', aciklama: 'Hafta içi iş çıkışı ve hafta sonu sabah maçları.' },
+  { id: 'sergi', ad: 'Sergi Gezenler', ilgi: 'sergi', aciklama: 'Ayda iki sergi, sonrasında sohbet.' },
+  { id: 'kitap', ad: 'Kitap Kulübü', ilgi: 'kitap', aciklama: 'Ayın kitabı, ayda bir buluşma.' },
+  { id: 'kosu', ad: 'Koşu Grubu', ilgi: 'kosu', aciklama: 'Pazar sabahları sahilde.' },
+  { id: 'padel', ad: 'Padel Ekibi', ilgi: 'padel', aciklama: 'Dörtlü maçlar, seviye fark etmez.' },
+  { id: 'yemek', ad: 'Şefin Masası', ilgi: 'yemek', aciklama: 'Ayda bir şefin masasında akşam yemeği.' },
+  { id: 'fotograf', ad: 'Foto Yürüyüşü', ilgi: 'fotograf', aciklama: 'Şehirde fotoğraf yürüyüşleri.' },
+  { id: 'teknoloji', ad: 'Teknoloji Sohbetleri', ilgi: 'teknoloji', aciklama: 'Ayda bir konu, bir konuşmacı.' },
 ];
+
+export const KULUPLER: Kulup[] = TOHUM_KULUPLER.map((k) => ({ ...k, uyeler: ilgiyiSecenler(k.ilgi), esik: KULUP_ESIGI }));
 
 export const kulupBul = (id: string) => KULUPLER.find((k) => k.id === id);
 
