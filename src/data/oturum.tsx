@@ -80,7 +80,15 @@ type Baglam = Durum & {
   planaKatil: (id: string) => void;
   kulubeKatil: (id: string) => void;
   baglan: (kisiId: string) => void;
-  mesajGonder: (sohbetId: string, metin: string, hedef?: { tur: 'kisi' | 'kulup'; id: string }) => void;
+  mesajGonder: (sohbetId: string, metin: string, hedef?: { tur: 'kisi' | 'kulup'; id: string }, ek?: string) => void;
+  /** Sohbeti actim: tum mesajlar okundu */
+  okunduIsaretle: (sohbetId: string) => void;
+  /** Mesaja tepki; ayni emoji tekrar secilirse kalkar */
+  mesajTepki: (sohbetId: string, sira: number, emoji: string) => void;
+  /** Yalnizca kendi mesajim silinir */
+  mesajSil: (sohbetId: string, sira: number) => void;
+  /** Sohbet yalnizca benim listemden kalkar */
+  sohbetSil: (sohbetId: string) => void;
   davetiKullan: () => void;
   /** Kulup oner; yeni fikrin id'sini dondurur */
   kulupOner: (f: Omit<KulupFikri, 'id' | 'oneren' | 'destekciler'>) => string;
@@ -156,15 +164,38 @@ export function OturumSaglayici({ children }: { children: ReactNode }) {
           ...d,
           baglantilar: d.baglantilar.includes(kisiId) ? d.baglantilar : [...d.baglantilar, kisiId],
         })),
-      mesajGonder: (sohbetId, metin, hedef) =>
+      mesajGonder: (sohbetId, metin, hedef, ek) =>
         guncelle((d) => {
-          const yeni = { kimden: 'ben', metin, saat: saatSimdi() };
+          const yeni = { kimden: 'ben', metin, saat: saatSimdi(), ...(ek ? { ek } : {}) };
           const var_ = d.sohbetler.find((s) => s.id === sohbetId);
           const sohbetler = var_
             ? d.sohbetler.map((s) => (s.id === sohbetId ? { ...s, mesajlar: [...s.mesajlar, yeni] } : s))
             : [{ id: sohbetId, tur: hedef?.tur ?? 'kisi', hedef: hedef?.id ?? sohbetId, mesajlar: [yeni] }, ...d.sohbetler];
           return { ...d, sohbetler };
         }),
+      okunduIsaretle: (sohbetId) =>
+        guncelle((d) => {
+          const s = d.sohbetler.find((x) => x.id === sohbetId);
+          if (!s || (s.okunan ?? 0) >= s.mesajlar.length) return d;
+          return { ...d, sohbetler: d.sohbetler.map((x) => (x.id === sohbetId ? { ...x, okunan: x.mesajlar.length } : x)) };
+        }),
+      mesajTepki: (sohbetId, sira, emoji) =>
+        guncelle((d) => ({
+          ...d,
+          sohbetler: d.sohbetler.map((s) =>
+            s.id !== sohbetId ? s : { ...s, mesajlar: s.mesajlar.map((m, i) => (i === sira ? { ...m, tepki: m.tepki === emoji ? undefined : emoji } : m)) }
+          ),
+        })),
+      mesajSil: (sohbetId, sira) =>
+        guncelle((d) => ({
+          ...d,
+          sohbetler: d.sohbetler.map((s) => {
+            if (s.id !== sohbetId || s.mesajlar[sira]?.kimden !== 'ben') return s;
+            const okunan = (s.okunan ?? 0) > sira ? (s.okunan ?? 0) - 1 : s.okunan;
+            return { ...s, mesajlar: s.mesajlar.filter((_, i) => i !== sira), okunan };
+          }),
+        })),
+      sohbetSil: (sohbetId) => guncelle((d) => ({ ...d, sohbetler: d.sohbetler.filter((s) => s.id !== sohbetId) })),
       davetiKullan: () => guncelle((d) => ({ ...d, davetHakki: Math.max(0, d.davetHakki - 1) })),
       kulupOner: (f) => {
         const id = `fikir-ben-${Date.now().toString(36)}`;

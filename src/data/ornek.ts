@@ -319,8 +319,32 @@ export const KULUP_FIKIRLERI: KulupFikri[] = [
 /** Bir fikri destekleyen toplam kisi (oneren dahil) */
 export const fikirSayisi = (f: KulupFikri) => f.destekciler.length + 1;
 
-export type Mesaj = { kimden: 'ben' | string; metin: string; saat: string; /** Kulup sohbetine dusen yeni bulusma */ plan?: string };
-export type Sohbet = { id: string; tur: 'kisi' | 'kulup'; hedef: string; mesajlar: Mesaj[] };
+export type Mesaj = {
+  kimden: 'ben' | string;
+  metin: string;
+  saat: string;
+  /** Kulup sohbetine dusen yeni bulusma */
+  plan?: string;
+  /** Ekli fotograf (prototipte data URI) */
+  ek?: string;
+  /** Benim tepkim ve karsi tarafin tepkisi (emoji) */
+  tepki?: string;
+  karsiTepki?: string;
+};
+export type Sohbet = {
+  id: string;
+  tur: 'kisi' | 'kulup';
+  hedef: string;
+  mesajlar: Mesaj[];
+  /** Okudugum mesaj sayisi; sonrasindaki baskasinin mesajlari okunmamis */
+  okunan?: number;
+};
+
+/** Ekrandaki tepki secenekleri (ExCom ile ayni) */
+export const TEPKILER = ['❤️', '😂', '😮', '😢', '👏', '🔥'];
+
+/** Sohbetteki okunmamis (baskasinin yazdigi) mesaj sayisi */
+export const okunmamisSayisi = (s: Sohbet) => s.mesajlar.slice(s.okunan ?? 0).filter((m) => m.kimden !== 'ben').length;
 
 /** Baslangic sohbetleri */
 export const SOHBETLER: Sohbet[] = [
@@ -335,7 +359,8 @@ export const SOHBETLER: Sohbet[] = [
     id: 'kulup-sergi', tur: 'kulup', hedef: 'sergi',
     mesajlar: [
       { kimden: 'burcu', metin: 'Bu hafta İstanbul Modern’e kim geliyor?', saat: 'Dün' },
-      { kimden: 'selin', metin: 'Ben varım! 11’de girişte buluşalım.', saat: 'Dün' },
+      { kimden: 'selin', metin: 'Ben varım! 11’de girişte buluşalım.', saat: 'Dün', karsiTepki: '👏' },
     ],
+    okunan: 1,
   },
 ];

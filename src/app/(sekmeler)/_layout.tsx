@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Icon, type IconName } from '@/components/icon';
 import { Metin } from '@/components/temel';
 import { Colors, Marka } from '@/constants/theme';
+import { okunmamisSayisi } from '@/data/ornek';
 import { useOturum } from '@/data/oturum';
 
 const SEKMELER: { ad: string; baslik: string; ikon: IconName }[] = [
@@ -33,7 +34,7 @@ export default function SekmeYerlesimi() {
 function AltMenu({ state, navigation }: { state: { index: number; routes: { name: string; key: string }[] }; navigation: { navigate: (n: string) => void } }) {
   const alt = useSafeAreaInsets().bottom;
   const { sohbetler } = useOturum();
-  const okunmamis = sohbetler.filter((s) => s.mesajlar[s.mesajlar.length - 1]?.kimden !== 'ben').length;
+  const okunmamis = sohbetler.filter((s) => okunmamisSayisi(s) > 0).length;
 
   return (
     <View
