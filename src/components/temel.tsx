@@ -156,6 +156,10 @@ export function KulupGorseli({ ilgi, genislik, yukseklik, kose = Kose.md }: { il
 /** Ust uste binmis kucuk avatarlar + "+18" */
 export function AvatarYigini({ adlar, toplam, idler }: { adlar: string[]; toplam: number; idler?: string[] }) {
   const goster = adlar.slice(0, 3);
+  // Henuz yalniz sen varsan "+1" yerine acikca yaz
+  if (goster.length === 0) {
+    return <Metin style={{ ...Yazi.etiket, color: Colors.textMuted }}>{toplam > 0 ? `${toplam} kişi` : 'İlk sen katıl'}</Metin>;
+  }
   return (
     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
       {goster.map((a, i) => (

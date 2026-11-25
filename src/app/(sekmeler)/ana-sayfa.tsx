@@ -8,7 +8,7 @@ import { Avatar, BolumBasligi, Dugme, Ekran, IlerlemeCubugu, Kart, KulupGorseli,
 import { Bosluk, Colors, Kose, Marka, Yazi } from '@/constants/theme';
 import { davetPaylas } from '@/data/davet';
 import { kisiOnerileri, planNedeni, planPuani } from '@/data/eslestirme';
-import { ilgiAdi, KULUPLER, PLANLAR } from '@/data/ornek';
+import { ilgiAdi, KULUPLER } from '@/data/ornek';
 import { useOturum } from '@/data/oturum';
 
 /**
@@ -20,7 +20,7 @@ export default function AnaSayfa() {
   const oturum = useOturum();
   const uye = oturum.uye!;
 
-  const planlar = PLANLAR.filter((p) => !p.ayinEtkinligi)
+  const planlar = oturum.planlar.filter((p) => !p.ayinEtkinligi && (!p.kulup || oturum.kuluplerim.includes(p.kulup)))
     .map((p) => ({ p, puan: planPuani(uye, p) }))
     .sort((a, b) => b.puan - a.puan);
   const oneCikan = planlar[0]?.p;
@@ -33,7 +33,7 @@ export default function AnaSayfa() {
     .sort((a, b) => sayiOf(b) - sayiOf(a))[0];
   const olusanSayi = olusan ? sayiOf(olusan) : 0;
   const [davetKopyalandi, setDavetKopyalandi] = useState(false);
-  const ayinEtkinligi = PLANLAR.find((p) => p.ayinEtkinligi);
+  const ayinEtkinligi = oturum.planlar.find((p) => p.ayinEtkinligi);
 
   return (
     <Ekran>

@@ -1,4 +1,5 @@
-import { useLocalSearchParams } from 'expo-router';
+import { Image } from 'expo-image';
+import { router, useLocalSearchParams } from 'expo-router';
 import { useRef, useState } from 'react';
 import { KeyboardAvoidingView, Platform, Pressable, ScrollView, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -12,7 +13,7 @@ import { useOturum } from '@/data/oturum';
 /** SOHBET: kisi id'si ya da "kulup-<id>" */
 export default function Sohbet() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { sohbetler, mesajGonder } = useOturum();
+  const { sohbetler, mesajGonder, planiBul } = useOturum();
   const [metin, setMetin] = useState('');
   const kaydir = useRef<ScrollView>(null);
 
@@ -44,6 +45,19 @@ export default function Sohbet() {
                 {yazan && <Metin style={{ ...Yazi.etiket, color: Colors.accent, marginLeft: 4 }}>{yazan}</Metin>}
                 <View style={{ backgroundColor: ben ? Marka.lacivert : Colors.white, borderRadius: Kose.lg, borderBottomRightRadius: ben ? 4 : Kose.lg, borderBottomLeftRadius: ben ? Kose.lg : 4, paddingHorizontal: 14, paddingVertical: 10 }}>
                   <Metin style={{ color: ben ? Colors.white : Colors.text }}>{m.metin}</Metin>
+                  {m.plan && planiBul(m.plan) && (() => {
+                    const p = planiBul(m.plan!)!;
+                    return (
+                      <Pressable onPress={() => router.push(`/etkinlik/${p.id}`)} style={{ marginTop: 8, borderRadius: Kose.md, overflow: 'hidden', backgroundColor: Colors.white, flexDirection: 'row', alignItems: 'center', gap: Bosluk.sm }}>
+                        <Image source={p.gorsel} style={{ width: 64, height: 64 }} contentFit="cover" />
+                        <View style={{ flex: 1, paddingRight: Bosluk.sm }}>
+                          <Metin style={Yazi.etiket} numberOfLines={1}>{p.baslik}</Metin>
+                          <Metin style={{ ...Yazi.ikincil, color: Colors.textMuted }} numberOfLines={1}>{p.gun} · {p.saat} · {p.semt}</Metin>
+                          <Metin style={{ ...Yazi.etiket, color: Colors.accent }}>Katıl →</Metin>
+                        </View>
+                      </Pressable>
+                    );
+                  })()}
                 </View>
                 <Metin style={{ ...Yazi.etiket, fontWeight: '400', color: Colors.textMuted, alignSelf: ben ? 'flex-end' : 'flex-start', marginHorizontal: 4 }}>{m.saat}</Metin>
               </View>

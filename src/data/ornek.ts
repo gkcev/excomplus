@@ -148,9 +148,14 @@ export type Plan = {
   kontenjan: number;
   katilan: string[];
   ilgiler: string[];
-  gorsel: number;
+  /** Yerel fotograf (require) ya da uyenin sectigi fotograf (data URI) */
+  gorsel: number | string;
   aciklama: string;
   ayinEtkinligi?: boolean;
+  /** Kulup bulusmasiysa kulubun id'si (kulubun ev sahibi koyar) */
+  kulup?: string;
+  /** Bulusmayi koyan ev sahibi (kisi id ya da 'ben') */
+  evSahibi?: string;
 };
 
 /** Ekibin koydugu hazir planlar (strateji: "plani biz koyuyoruz") */
@@ -179,7 +184,7 @@ export const PLANLAR: Plan[] = [
   {
     id: 'kitap-kulubu', baslik: 'Kitap kulübü: ayın kitabı', tur: 'Kulüp buluşması',
     gun: 'Salı', saat: '19.30', semt: 'Moda', mekan: 'Bir sahaf kafe',
-    kontenjan: 8, katilan: ['elif', 'deniz', 'ayse'], ilgiler: ['kitap'],
+    kontenjan: 8, katilan: ['elif', 'deniz', 'ayse'], ilgiler: ['kitap'], kulup: 'kitap', evSahibi: 'elif',
     gorsel: require('@/assets/images/etkinlik/kitap-kulubu.jpg'),
     aciklama: 'Bu ay bir roman konuşuyoruz. Okumadıysan da gel, dinle.',
   },
@@ -224,6 +229,8 @@ export type Kulup = {
   uyeler: string[];
   esik: number;
   aciklama: string;
+  /** Kulubun ev sahibi (kisi id). Yoksa bir uye gonullu olabilir. */
+  evSahibi?: string;
 };
 
 /**
@@ -242,12 +249,12 @@ const ilgiyiSecenler = (ilgi: string) => KISILER.filter((k) => k.ilgiler.include
 const TOHUM_KULUPLER: Omit<Kulup, 'uyeler' | 'esik'>[] = [
   { id: 'tenis', ad: 'Tenis Kulübü', ilgi: 'tenis', aciklama: 'Hafta içi iş çıkışı ve hafta sonu sabah maçları.' },
   { id: 'sergi', ad: 'Sergi Gezenler', ilgi: 'sergi', aciklama: 'Ayda iki sergi, sonrasında sohbet.' },
-  { id: 'kitap', ad: 'Kitap Kulübü', ilgi: 'kitap', aciklama: 'Ayın kitabı, ayda bir buluşma.' },
+  { id: 'kitap', ad: 'Kitap Kulübü', ilgi: 'kitap', evSahibi: 'elif', aciklama: 'Ayın kitabı, ayda bir buluşma.' },
   { id: 'kosu', ad: 'Koşu Grubu', ilgi: 'kosu', aciklama: 'Pazar sabahları sahilde.' },
   { id: 'padel', ad: 'Padel Ekibi', ilgi: 'padel', aciklama: 'Dörtlü maçlar, seviye fark etmez.' },
-  { id: 'yemek', ad: 'Şefin Masası', ilgi: 'yemek', aciklama: 'Ayda bir şefin masasında akşam yemeği.' },
+  { id: 'yemek', ad: 'Şefin Masası', ilgi: 'yemek', evSahibi: 'emre', aciklama: 'Ayda bir şefin masasında akşam yemeği.' },
   { id: 'fotograf', ad: 'Foto Yürüyüşü', ilgi: 'fotograf', aciklama: 'Şehirde fotoğraf yürüyüşleri.' },
-  { id: 'teknoloji', ad: 'Teknoloji Sohbetleri', ilgi: 'teknoloji', aciklama: 'Ayda bir konu, bir konuşmacı.' },
+  { id: 'teknoloji', ad: 'Teknoloji Sohbetleri', ilgi: 'teknoloji', evSahibi: 'mert', aciklama: 'Ayda bir konu, bir konuşmacı.' },
 ];
 
 export const KULUPLER: Kulup[] = TOHUM_KULUPLER.map((k) => ({ ...k, uyeler: ilgiyiSecenler(k.ilgi), esik: KULUP_ESIGI }));
@@ -291,7 +298,7 @@ export const KULUP_FIKIRLERI: KulupFikri[] = [
 /** Bir fikri destekleyen toplam kisi (oneren dahil) */
 export const fikirSayisi = (f: KulupFikri) => f.destekciler.length + 1;
 
-export type Mesaj = { kimden: 'ben' | string; metin: string; saat: string };
+export type Mesaj = { kimden: 'ben' | string; metin: string; saat: string; /** Kulup sohbetine dusen yeni bulusma */ plan?: string };
 export type Sohbet = { id: string; tur: 'kisi' | 'kulup'; hedef: string; mesajlar: Mesaj[] };
 
 /** Baslangic sohbetleri */

@@ -10,7 +10,7 @@ import { Avatar, AvatarYigini, Dugme, IlerlemeCubugu, Kart, KulupGorseli, Metin,
 import { Bosluk, Colors, Durum, Marka, Yazi } from '@/constants/theme';
 import type { Oneri } from '@/data/eslestirme';
 import { KISI_FOTOLARI } from '@/data/fotolar';
-import { ilgiAdi, kisiBul, type Kulup, type Plan } from '@/data/ornek';
+import { ilgiAdi, kisiBul, kulupBul, type Kulup, type Plan } from '@/data/ornek';
 import { useOturum } from '@/data/oturum';
 
 /**
@@ -23,6 +23,7 @@ export function PlanKarti({ plan, neden, tur = 'vitrin' }: { plan: Plan; neden?:
   const katildim = katildigimPlanlar.includes(plan.id);
   const adlar = plan.katilan.map((k) => kisiBul(k)?.ad ?? '');
   const toplam = plan.katilan.length + (katildim ? 1 : 0);
+  const kulupAdi = plan.kulup ? kulupBul(plan.kulup)?.ad : undefined;
   const katilDugmesi = (
     <Dugme kucuk baslik={katildim ? 'Katılıyorsun' : 'Katıl'} tur={katildim ? 'hafif' : 'turuncu'} ikon={katildim ? 'check' : undefined} onPress={() => planaKatil(plan.id)} />
   );
@@ -40,6 +41,7 @@ export function PlanKarti({ plan, neden, tur = 'vitrin' }: { plan: Plan; neden?:
           <Metin style={Yazi.isim} numberOfLines={2}>{plan.baslik}</Metin>
           <Metin style={{ ...Yazi.ikincil, color: Colors.textMuted }} numberOfLines={1}>{plan.gun} · {plan.saat}</Metin>
           <Metin style={{ ...Yazi.ikincil, color: Colors.textMuted }} numberOfLines={1}>{plan.semt}</Metin>
+          {kulupAdi && <Metin style={{ ...Yazi.etiket, color: Colors.text }} numberOfLines={1}>{kulupAdi}</Metin>}
           {neden && (
             <Metin style={{ ...Yazi.etiket, color: Colors.accent }} numberOfLines={1}>{neden}</Metin>
           )}
@@ -65,7 +67,7 @@ export function PlanKarti({ plan, neden, tur = 'vitrin' }: { plan: Plan; neden?:
           <Metin style={{ ...Yazi.kartBasligi, color: Colors.white }} numberOfLines={1}>{plan.baslik}</Metin>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
             <Icon name="calendar" size={13} color="#E8EBF0" />
-            <Metin style={{ ...Yazi.ikincil, color: '#E8EBF0' }} numberOfLines={1}>{plan.gun} · {plan.saat} · {plan.semt}</Metin>
+            <Metin style={{ ...Yazi.ikincil, color: '#E8EBF0' }} numberOfLines={1}>{plan.gun} · {plan.saat} · {plan.semt}{kulupAdi ? ` · ${kulupAdi}` : ''}</Metin>
           </View>
         </View>
       </View>

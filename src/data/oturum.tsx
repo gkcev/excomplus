@@ -8,7 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 
 import type { Ben } from '@/data/eslestirme';
-import { kisiBul, KULUPLER, SOHBETLER, type KulupFikri, type Sohbet } from '@/data/ornek';
+import { kisiBul, KULUPLER, PLANLAR, SOHBETLER, type KulupFikri, type Plan, type Sohbet } from '@/data/ornek';
 
 export type Uye = Ben & {
   pozisyon?: string;
@@ -37,6 +37,10 @@ type Durum = {
   fikirlerim: KulupFikri[];
   /** "Ben de varim" dedigim kulup onerileri */
   destekledigimFikirler: string[];
+  /** Ev sahibi oldugum kulupler */
+  evSahibiKuluplerim: string[];
+  /** Ev sahibi olarak koydugum kulup bulusmalari */
+  kulupPlanlari: Plan[];
 };
 
 const BASLANGIC: Durum = {
@@ -47,6 +51,8 @@ const BASLANGIC: Durum = {
   davetHakki: 1,
   fikirlerim: [],
   destekledigimFikirler: [],
+  evSahibiKuluplerim: [],
+  kulupPlanlari: [],
   davetKodum: '',
 };
 
@@ -65,6 +71,12 @@ type Baglam = Durum & {
   /** Kulup oner; yeni fikrin id'sini dondurur */
   kulupOner: (f: Omit<KulupFikri, 'id' | 'oneren' | 'destekciler'>) => string;
   fikriDestekle: (id: string) => void;
+  /** Ekip planlari + kulup bulusmalari */
+  planlar: Plan[];
+  planiBul: (id: string) => Plan | undefined;
+  evSahibiOl: (kulupId: string) => void;
+  /** Kulup bulusmasi koy; yeni planin id'sini dondurur. Kulup sohbetine de duser. */
+  bulusmaKoy: (p: Omit<Plan, 'id' | 'katilan' | 'evSahibi'>) => string;
   cikis: () => void;
 };
 
@@ -141,6 +153,27 @@ export function OturumSaglayici({ children }: { children: ReactNode }) {
       kulupOner: (f) => {
         const id = `fikir-ben-${Date.now().toString(36)}`;
         guncelle((d) => ({ ...d, fikirlerim: [{ ...f, id, oneren: 'ben', destekciler: [] }, ...d.fikirlerim] }));
+        return id;
+      },
+      planlar: [...durum.kulupPlanlari, ...PLANLAR],
+      planiBul: (id) => durum.kulupPlanlari.find((p) => p.id === id) ?? PLANLAR.find((p) => p.id === id),
+      evSahibiOl: (kulupId) => guncelle((d) => ({ ...d, evSahibiKuluplerim: ekleCikar(d.evSahibiKuluplerim, kulupId) })),
+      bulusmaKoy: (p) => {
+        const id = `bulusma-${Date.now().toString(36)}`;
+        guncelle((d) => {
+          const sohbetId = `kulup-${p.kulup}`;
+          const mesaj = { kimden: 'ben', metin: `Yeni buluşma koydum: ${p.baslik}. Gelmek isteyen katılsın!`, saat: saatSimdi(), plan: id };
+          const var_ = d.sohbetler.find((s) => s.id === sohbetId);
+          const sohbetler = var_
+            ? d.sohbetler.map((s) => (s.id === sohbetId ? { ...s, mesajlar: [...s.mesajlar, mesaj] } : s))
+            : [{ id: sohbetId, tur: 'kulup' as const, hedef: p.kulup!, mesajlar: [mesaj] }, ...d.sohbetler];
+          return {
+            ...d,
+            kulupPlanlari: [{ ...p, id, katilan: [], evSahibi: 'ben' }, ...d.kulupPlanlari],
+            katildigimPlanlar: [...d.katildigimPlanlar, id],
+            sohbetler,
+          };
+        });
         return id;
       },
       fikriDestekle: (id) => guncelle((d) => ({ ...d, destekledigimFikirler: ekleCikar(d.destekledigimFikirler, id) })),

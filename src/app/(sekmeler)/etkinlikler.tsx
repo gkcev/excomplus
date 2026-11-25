@@ -6,30 +6,39 @@ import { PlanKarti } from '@/components/kartlar';
 import { Cip, Ekran, Metin } from '@/components/temel';
 import { Bosluk, Colors, Yazi } from '@/constants/theme';
 import { planNedeni, planPuani } from '@/data/eslestirme';
-import { ilgiAdi, ilgiSimge, PLANLAR } from '@/data/ornek';
+import { ilgiAdi, ilgiSimge, kulupBul } from '@/data/ornek';
 import { useOturum } from '@/data/oturum';
 
 /**
- * ETKINLIKLER: ekibin koydugu hazir planlar.
- * Her hafta 1 kucuk plan (6-8 kisi), alti ayda bir buyuk ExCom etkinligi.
+ * ETKINLIKLER: ekibin koydugu hazir planlar + kulup bulusmalari.
+ * Ekip: her hafta 1 kucuk plan (6-8 kisi), alti ayda bir buyuk etkinlik.
+ * Kulup bulusmasini kulubun ev sahibi koyar; uyeler ve ayni ilgiyi secenler gorur.
  */
 export default function Etkinlikler() {
-  const { uye, katildigimPlanlar } = useOturum();
+  const { uye, katildigimPlanlar, kuluplerim, planlar } = useOturum();
   const { ilgi } = useLocalSearchParams<{ ilgi?: string }>();
   const [suzgec, setSuzgec] = useState<string>(ilgi ?? 'senin');
 
-  let liste = [...PLANLAR].sort((a, b) => planPuani(uye!, b) - planPuani(uye!, a));
-  if (suzgec === 'katildiklarim') liste = liste.filter((p) => katildigimPlanlar.includes(p.id));
+  // Kulup bulusmasi: kulubun uyesi ya da ayni ilgiyi secmis olan gorur
+  const gorur = (kulupId?: string) => {
+    if (!kulupId) return true;
+    const k = kulupBul(kulupId);
+    return kuluplerim.includes(kulupId) || (!!k && uye!.ilgiler.includes(k.ilgi));
+  };
+  let liste = planlar.filter((p) => gorur(p.kulup)).sort((a, b) => planPuani(uye!, b) - planPuani(uye!, a));
+  if (suzgec === 'kuluplerim') liste = liste.filter((p) => p.kulup && kuluplerim.includes(p.kulup));
+  else if (suzgec === 'katildiklarim') liste = liste.filter((p) => katildigimPlanlar.includes(p.id));
   else if (suzgec !== 'senin' && suzgec !== 'tumu') liste = liste.filter((p) => p.ilgiler.includes(suzgec));
 
   return (
     <Ekran>
       <View style={{ gap: 4 }}>
         <Metin style={Yazi.ekranBasligi}>Etkinlikler</Metin>
-        <Metin style={{ color: Colors.textMuted }}>Planları biz koyuyoruz; sen sadece “Katıl” de.</Metin>
+        <Metin style={{ color: Colors.textMuted }}>Ekibin planları ve kulüplerin buluşmaları; sen sadece “Katıl” de.</Metin>
       </View>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }} style={{ marginTop: -Bosluk.sm }}>
         <Cip metin="Senin için" secili={suzgec === 'senin'} onPress={() => setSuzgec('senin')} />
+        <Cip metin="Kulüplerim" secili={suzgec === 'kuluplerim'} onPress={() => setSuzgec('kuluplerim')} />
         <Cip metin={`Katıldıklarım (${katildigimPlanlar.length})`} secili={suzgec === 'katildiklarim'} onPress={() => setSuzgec('katildiklarim')} />
         {uye!.ilgiler.map((i) => (
           <Cip key={i} metin={ilgiAdi(i)} simge={ilgiSimge(i)} secili={suzgec === i} onPress={() => setSuzgec(i)} />

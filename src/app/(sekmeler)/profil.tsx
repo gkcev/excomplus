@@ -7,7 +7,7 @@ import { Avatar, Cip, Dugme, Ekran, Kart, Metin } from '@/components/temel';
 import { Bosluk, Colors, Kose, Marka, Yazi } from '@/constants/theme';
 import { davetPaylas } from '@/data/davet';
 import { fotoSec } from '@/data/foto';
-import { ilgiAdi, ilgiSimge, kisiBul, kulupBul, planBul, tamAd } from '@/data/ornek';
+import { ilgiAdi, ilgiSimge, kisiBul, kulupBul, tamAd } from '@/data/ornek';
 import { useOturum } from '@/data/oturum';
 
 /** PROFIL: bilgiler, davet eden, davet hakki ve kodu, planlarim, kuluplerim */
@@ -95,7 +95,7 @@ export default function Profil() {
           <Metin style={{ color: Colors.textMuted }}>Henüz bir plana katılmadın.</Metin>
         ) : (
           o.katildigimPlanlar.map((id) => {
-            const p = planBul(id);
+            const p = o.planiBul(id);
             if (!p) return null;
             return (
               <Satir key={id} ikon="calendar" baslik={p.baslik} alt={`${p.gun} · ${p.saat} · ${p.semt}`} onPress={() => router.push(`/etkinlik/${id}`)} />

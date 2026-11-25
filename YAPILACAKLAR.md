@@ -24,3 +24,5 @@ kurallari: src/data/eslestirme.ts (strateji sunumu sayfa 8).
 - [ ] KVKK metni (yeni alanlar: ilgi, mezuniyet yili, davet eden)
 - [ ] Marka: ad, simge, renkler (simdilik ExCom logosu + PLUS rozeti)
 - [ ] EAS projesi ve magaza kayitlari (paket kimligi: app.excomplus)
+- [x] Kulup bulusmalari: ev sahibi koyar, Etkinlikler'de 'Kulup bulusmasi' + Kuluplerim filtresi, sohbete duser (prototipte)
+- [ ] Ekip paneli: uygunsuz kulup bulusmasini kaldirma

@@ -3,23 +3,31 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { Pressable, View } from 'react-native';
 
 import { Icon } from '@/components/icon';
-import { Avatar, Dugme, Ekran, Metin, Neden, UstBar } from '@/components/temel';
+import { Avatar, Dugme, Ekran, KulupGorseli, Metin, Neden, UstBar } from '@/components/temel';
 import { Bosluk, Colors, Kose, Marka, Yazi } from '@/constants/theme';
 import { planNedeni } from '@/data/eslestirme';
-import { kisiBul, planBul } from '@/data/ornek';
+import { kisiBul, kulupBul, tamAd } from '@/data/ornek';
 import { useOturum } from '@/data/oturum';
 
 /** PLAN / ETKINLIK DETAYI: kimler katiliyor (tanidiklar once), katil */
 export default function EtkinlikDetay() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { uye, katildigimPlanlar, planaKatil } = useOturum();
-  const p = planBul(id);
+  const { uye, katildigimPlanlar, planaKatil, planiBul, kuluplerim, kulubeKatil } = useOturum();
+  const p = planiBul(id);
   if (!p || !uye) return <Ekran ust={<UstBar />}><Metin>Plan bulunamadı.</Metin></Ekran>;
 
   const katildim = katildigimPlanlar.includes(p.id);
   const sayi = p.katilan.length + (katildim ? 1 : 0);
   const katilanlar = [...p.katilan].sort((a, b) => Number(uye.tanidiklar.includes(b)) - Number(uye.tanidiklar.includes(a)));
   const neden = planNedeni(uye, p);
+  const kulup = p.kulup ? kulupBul(p.kulup) : undefined;
+  const kulupteyim = !!kulup && kuluplerim.includes(kulup.id);
+  const evSahibi = p.evSahibi === 'ben' ? 'Sen' : p.evSahibi ? (kisiBul(p.evSahibi) ? tamAd(kisiBul(p.evSahibi)!) : undefined) : undefined;
+  const katil = () => {
+    // Kulup bulusmasina katilan, kulupte degilse kulube de katilir
+    if (!katildim && kulup && !kulupteyim) kulubeKatil(kulup.id);
+    planaKatil(p.id);
+  };
 
   return (
     <Ekran
@@ -30,7 +38,7 @@ export default function EtkinlikDetay() {
             baslik={katildim ? 'Katılıyorsun · vazgeç' : sayi >= p.kontenjan ? 'Kontenjan doldu' : 'Katıl'}
             tur={katildim ? 'cizgili' : 'turuncu'}
             pasif={!katildim && sayi >= p.kontenjan}
-            onPress={() => planaKatil(p.id)}
+            onPress={katil}
           />
         </View>
       }>
@@ -44,6 +52,18 @@ export default function EtkinlikDetay() {
         <Bilgi ikon="map-pin" metin={`${p.mekan} · ${p.semt}`} />
         <Bilgi ikon="users" metin={`${sayi} / ${p.kontenjan} kişi`} />
       </View>
+      {kulup && (
+        <Pressable onPress={() => router.push(`/kulup/${kulup.id}`)} style={{ flexDirection: 'row', alignItems: 'center', gap: Bosluk.md, padding: Bosluk.md, borderRadius: Kose.lg, backgroundColor: Marka.seftali }}>
+          <KulupGorseli ilgi={kulup.ilgi} genislik={48} yukseklik={48} />
+          <View style={{ flex: 1 }}>
+            <Metin style={Yazi.isim}>{kulup.ad} buluşması</Metin>
+            <Metin style={{ ...Yazi.ikincil, color: Colors.textMuted }}>
+              {kulupteyim ? `Ev sahibi: ${evSahibi ?? 'ekip'}` : 'Katılırsan kulübe de katılırsın.'}
+            </Metin>
+          </View>
+          <Icon name="chevron-right" size={18} color={Colors.textMuted} />
+        </Pressable>
+      )}
       <Metin>{p.aciklama}</Metin>
 
       <View style={{ gap: Bosluk.md }}>
