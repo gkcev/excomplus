@@ -1,98 +1,45 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Redirect, router } from 'expo-router';
+import { View } from 'react-native';
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+import { Dugme, Ekran, Logo, Metin } from '@/components/temel';
+import { Bosluk, Colors, Kose, Marka, Yazi } from '@/constants/theme';
+import { useOturum } from '@/data/oturum';
 
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
+/**
+ * KARSILAMA (uyenin yolculugu 1)
+ * Plus davetle girilen bir yer: ana dugme "Davet kodum var".
+ * Kodu olmayan basvuru birakir.
+ */
+export default function Karsilama() {
+  const { uye, davetEden } = useOturum();
+  if (uye) return <Redirect href="/ana-sayfa" />;
+  if (davetEden) return <Redirect href="/profil-doldur" />;
+
   return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
+    <Ekran kaydir={false} icerikStil={{ padding: Bosluk.lg, justifyContent: 'space-between' }}>
+      <View style={{ paddingTop: Bosluk.lg }}>
+        <Logo genislik={130} />
+      </View>
+
+      <View style={{ gap: Bosluk.lg }}>
+        <View style={{ height: 220, borderRadius: 28, backgroundColor: Marka.seftali, overflow: 'hidden', justifyContent: 'flex-end', padding: Bosluk.lg }}>
+          <View style={{ position: 'absolute', width: 180, height: 180, borderRadius: 90, backgroundColor: Marka.sari, top: -40, right: -30, opacity: 0.8 }} />
+          <View style={{ position: 'absolute', width: 120, height: 120, borderRadius: 60, backgroundColor: Marka.turuncu, top: 50, right: 70, opacity: 0.85 }} />
+          <View style={{ position: 'absolute', width: 90, height: 90, borderRadius: Kose.xl, backgroundColor: Marka.lacivert, top: 20, left: 24, transform: [{ rotate: '-12deg' }] }} />
+          <Metin style={{ fontSize: 15, color: Colors.text, fontWeight: '600' }}>Yalnızca davetle ✉️</Metin>
+        </View>
+        <Metin style={{ ...Yazi.ekranBasligi, fontSize: 34, lineHeight: 40 }}>
+          Güvendiğin insanların{'\n'}tanıştırdığı bir çevre.
+        </Metin>
+        <Metin style={{ color: Colors.textMuted }}>
+          Beyaz yakalılar için ortak ilgi alanları, küçük planlar ve kulüpler. Her üye, tanıdığı birinin daveti ile gelir.
+        </Metin>
+      </View>
+
+      <View style={{ gap: Bosluk.md, paddingBottom: Bosluk.lg }}>
+        <Dugme baslik="Davet kodum var" onPress={() => router.push('/davet-kodu')} />
+        <Dugme baslik="Kodum yok, başvur" tur="cizgili" onPress={() => router.push('/basvuru')} />
+      </View>
+    </Ekran>
   );
 }
-
-export default function HomeScreen() {
-  return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
-
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
-
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
-          />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
-
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
-  },
-  safeArea: {
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
-  },
-  heroSection: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
-  },
-  title: {
-    textAlign: 'center',
-  },
-  code: {
-    textTransform: 'uppercase',
-  },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
-  },
-});

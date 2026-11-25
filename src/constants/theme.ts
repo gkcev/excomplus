@@ -1,65 +1,47 @@
 /**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
+ * ExCom Plus tasarim sistemi.
+ * Renkler ExCom'dan aynen alindi (renkler.ts); olculer ExCom rehberiyle ayni.
  */
 
-import '@/global.css';
+export { AVATAR_PASTELLERI, Colors, Durum, Marka, Pastel } from '@/constants/renkler';
 
-import { Platform } from 'react-native';
-
-export const Colors = {
-  light: {
-    text: '#000000',
-    background: '#ffffff',
-    backgroundElement: '#F0F0F3',
-    backgroundSelected: '#E0E1E6',
-    textSecondary: '#60646C',
-  },
-  dark: {
-    text: '#ffffff',
-    background: '#000000',
-    backgroundElement: '#212225',
-    backgroundSelected: '#2E3135',
-    textSecondary: '#B0B4BA',
-  },
+/** Kart ici 16, kartlar arasi 12, bolumler arasi 24, ekran kenari 16 */
+export const Bosluk = {
+  xs: 4,
+  sm: 8,
+  md: 12,
+  lg: 16,
+  xl: 24,
+  xxl: 32,
 } as const;
 
-export type ThemeColor = keyof typeof Colors.light & keyof typeof Colors.dark;
-
-export const Fonts = Platform.select({
-  ios: {
-    /** iOS `UIFontDescriptorSystemDesignDefault` */
-    sans: 'system-ui',
-    /** iOS `UIFontDescriptorSystemDesignSerif` */
-    serif: 'ui-serif',
-    /** iOS `UIFontDescriptorSystemDesignRounded` */
-    rounded: 'ui-rounded',
-    /** iOS `UIFontDescriptorSystemDesignMonospaced` */
-    mono: 'ui-monospace',
-  },
-  default: {
-    sans: 'normal',
-    serif: 'serif',
-    rounded: 'normal',
-    mono: 'monospace',
-  },
-  web: {
-    sans: 'var(--font-display)',
-    serif: 'var(--font-serif)',
-    rounded: 'var(--font-rounded)',
-    mono: 'var(--font-mono)',
-  },
-});
-
-export const Spacing = {
-  half: 2,
-  one: 4,
-  two: 8,
-  three: 16,
-  four: 24,
-  five: 32,
-  six: 64,
+export const Kose = {
+  sm: 8,
+  md: 12,
+  lg: 16,
+  xl: 20,
+  hap: 999,
 } as const;
 
-export const BottomTabInset = Platform.select({ ios: 50, android: 80 }) ?? 0;
-export const MaxContentWidth = 800;
+/** Tek yazi ailesi Outfit; kalinliga gore dosya secilir (bkz. components/metin.tsx) */
+export const Yazi = {
+  ekranBasligi: { fontSize: 28, fontWeight: '700' as const, lineHeight: 34 },
+  bolumBasligi: { fontSize: 19, fontWeight: '700' as const, lineHeight: 24 },
+  kartBasligi: { fontSize: 17, fontWeight: '700' as const, lineHeight: 22 },
+  isim: { fontSize: 15, fontWeight: '600' as const, lineHeight: 20 },
+  govde: { fontSize: 15, fontWeight: '400' as const, lineHeight: 22 },
+  ikincil: { fontSize: 13, fontWeight: '400' as const, lineHeight: 18 },
+  etiket: { fontSize: 12, fontWeight: '600' as const, lineHeight: 16 },
+} as const;
+
+/** Tek yumusak golge; kartta ya kenarlik ya golge */
+export const kartGolgesi = {
+  boxShadow: '0px 8px 22px -14px rgba(7, 24, 45, 0.25)',
+} as const;
+
+/** Genis ekranda (web) icerik telefon genisliginde ortalanir */
+export const icerikOrtala = {
+  width: '100%',
+  maxWidth: 560,
+  alignSelf: 'center',
+} as const;

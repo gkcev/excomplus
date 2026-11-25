@@ -1,0 +1,96 @@
+/** Tekrar kullanilan kartlar: plan, kisi, kulup */
+
+import { Image } from 'expo-image';
+import { router } from 'expo-router';
+import { Pressable, View } from 'react-native';
+
+import { Icon } from '@/components/icon';
+import { Avatar, AvatarYigini, Dugme, IlerlemeCubugu, Kart, Metin, Neden } from '@/components/temel';
+import { Bosluk, Colors, Durum, Kose, Marka, Yazi } from '@/constants/theme';
+import type { Oneri } from '@/data/eslestirme';
+import { ilgiAdi, ilgiSimge, kisiBul, type Kulup, type Plan } from '@/data/ornek';
+import { useOturum } from '@/data/oturum';
+
+/** Yatay buyuk plan karti (ana sayfa "Senin icin bugun") */
+export function PlanKarti({ plan, neden }: { plan: Plan; neden?: string | null }) {
+  const { katildigimPlanlar, planaKatil } = useOturum();
+  const katildim = katildigimPlanlar.includes(plan.id);
+  const adlar = plan.katilan.map((k) => kisiBul(k)?.ad ?? '');
+  const toplam = plan.katilan.length + (katildim ? 1 : 0);
+  return (
+    <Kart onPress={() => router.push(`/etkinlik/${plan.id}`)} style={{ flexDirection: 'row', overflow: 'hidden' }}>
+      <Image source={plan.gorsel} style={{ width: 120, minHeight: 150 }} contentFit="cover" />
+      <View style={{ flex: 1, padding: Bosluk.md, gap: 6 }}>
+        <View style={{ alignSelf: 'flex-start', backgroundColor: Marka.seftali, borderRadius: 6, paddingHorizontal: 8, paddingVertical: 2 }}>
+          <Metin style={{ ...Yazi.etiket, color: Colors.accent }}>{plan.tur}</Metin>
+        </View>
+        <Metin style={Yazi.kartBasligi} numberOfLines={2}>{plan.baslik}</Metin>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+          <Icon name="calendar" size={13} color={Colors.textMuted} />
+          <Metin style={{ ...Yazi.ikincil, color: Colors.textMuted }}>{plan.gun} · {plan.saat} · {plan.semt}</Metin>
+        </View>
+        {neden && <Neden metin={neden} />}
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto' }}>
+          <AvatarYigini adlar={adlar} toplam={toplam} />
+          <Dugme kucuk baslik={katildim ? 'Katılıyorsun' : 'Katıl'} tur={katildim ? 'hafif' : 'turuncu'} ikon={katildim ? 'check' : undefined} onPress={() => planaKatil(plan.id)} />
+        </View>
+      </View>
+    </Kart>
+  );
+}
+
+/** Dikey kucuk kisi karti (yatay kaydirilan liste) */
+export function KisiKarti({ oneri }: { oneri: Oneri }) {
+  const { baglantilar, baglan } = useOturum();
+  const k = oneri.kisi;
+  const bagli = baglantilar.includes(k.id);
+  return (
+    <Kart onPress={() => router.push(`/kisi/${k.id}`)} style={{ width: 150, padding: Bosluk.md, gap: 8 }}>
+      <View style={{ alignItems: 'center' }}>
+        <Avatar ad={`${k.ad} ${k.soyadHarf}`} id={k.id} boyut={72} />
+        <Pressable
+          accessibilityLabel={bagli ? 'İstek gönderildi' : `${k.ad} ile tanış`}
+          onPress={() => baglan(k.id)}
+          style={{ position: 'absolute', right: 18, bottom: -4, width: 28, height: 28, borderRadius: 14, backgroundColor: bagli ? Durum.onaylandi.zemin : Marka.turuncu, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: Colors.white }}>
+          <Icon name={bagli ? 'check' : 'plus'} size={14} color={bagli ? Durum.onaylandi.yazi : Colors.white} strokeWidth={3} />
+        </Pressable>
+      </View>
+      <View>
+        <Metin style={Yazi.isim}>{k.ad} {k.soyadHarf}.</Metin>
+        <Metin style={{ ...Yazi.ikincil, color: Colors.textMuted }} numberOfLines={1}>
+          {k.ilgiler.slice(0, 2).map(ilgiAdi).join(' · ')}
+        </Metin>
+      </View>
+      {oneri.nedenler[0] && <Neden metin={oneri.nedenler[0]} />}
+    </Kart>
+  );
+}
+
+/** Kulup karti: esige ulasmadiysa ilerleme cubugu, ulastiysa uye sayisi */
+export function KulupKarti({ kulup, genis }: { kulup: Kulup; genis?: boolean }) {
+  const { kuluplerim } = useOturum();
+  const uyeyim = kuluplerim.includes(kulup.id);
+  const sayi = kulup.uyeler.length + (uyeyim ? 1 : 0);
+  const acik = sayi >= kulup.esik;
+  return (
+    <Kart
+      onPress={() => router.push(`/kulup/${kulup.id}`)}
+      style={[{ padding: Bosluk.md, gap: 8 }, genis ? { flexDirection: 'row', alignItems: 'center', gap: Bosluk.md } : { width: 130 }]}>
+      <View style={{ width: 44, height: 44, borderRadius: Kose.md, backgroundColor: Marka.seftali, alignItems: 'center', justifyContent: 'center' }}>
+        <Metin style={{ fontSize: 22 }}>{ilgiSimge(kulup.ilgi)}</Metin>
+      </View>
+      <View style={{ flex: genis ? 1 : undefined, gap: 4 }}>
+        <Metin style={Yazi.isim} numberOfLines={1}>{kulup.ad}</Metin>
+        {acik ? (
+          <Metin style={{ ...Yazi.ikincil, color: Colors.textMuted }}>{sayi} üye · sohbet açık</Metin>
+        ) : (
+          <>
+            <Metin style={{ ...Yazi.ikincil, color: Colors.textMuted }}>{sayi} / {kulup.esik} kişi</Metin>
+            <IlerlemeCubugu oran={sayi / kulup.esik} />
+          </>
+        )}
+      </View>
+      {genis && uyeyim && <Icon name="check-circle" size={20} color={Marka.turuncu} />}
+    </Kart>
+  );
+}

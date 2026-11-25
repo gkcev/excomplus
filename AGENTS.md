@@ -32,3 +32,22 @@ Turkce. Kod icindeki yorumlar ve degisken adlari Turkce ama ASCII
 Su an prototip asamasindayiz: once ekranlar ve akis, ornek (sahte)
 veriyle. Gercek veritabani (yeni Supabase projesi) akis onaylaninca
 baglanir.
+
+## Plus nedir (strateji: "Yeni ExCom Ekip Plani", Kasim 2026)
+- Tum beyaz yakalilar icin; uyeler ExCom uyelerinin davetiyle gelir.
+- Giris davet kodu ile; kodu olmayan basvuru birakir.
+- Profil doldurma zorunlu, en fazla 3 ekran; en az 3 ilgi alani + sehir.
+- Medeni durum SORULMAZ. Yas gosterilmez; mezuniyet yili yalnizca arka
+  planda +-8 yil yakinlik icin.
+- Eslestirme: ortak ilgi, semt, ortak tanidik, davet zinciri, muzik.
+  Her onerinin nedeni ekranda yazar. Haftada 3 kisi onerisi.
+- Kulupler: ayni ilgiyi secenler esige ulasinca kulup ve sohbeti acilir.
+- Hazir planlar: ekip koyar (haftada 1 kucuk plan, 6-8 kisi).
+
+## Yapi
+- src/app: ekranlar (expo-router). (sekmeler) alt menulu bolum.
+- src/components/temel.tsx: Metin (Outfit), Dugme, Cip, Avatar, Logo, Ekran...
+- src/constants/renkler.ts: ExCom'dan aynen kopya; renkler buradan.
+- src/data/ornek.ts: prototip verisi; eslestirme.ts: puanlama;
+  oturum.tsx: cihazda saklanan prototip oturumu.
+- Onizleme: `npx expo start --web --port 8091`
