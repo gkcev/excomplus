@@ -81,7 +81,7 @@ export default function DavetKodu() {
         onPress={() => {
           if (!davetEdenId) return;
           davetKoduKabul(davetEdenId);
-          router.replace('/profil-doldur');
+          router.replace('/hesap-olustur');
         }}
       />
     </Ekran>

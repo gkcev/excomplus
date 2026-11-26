@@ -37,7 +37,18 @@ export type Uye = Ben & {
   foto?: string;
 };
 
+/**
+ * GIRIS HESABI (26 Kasim 2026)
+ * Plus'a iki yoldan girilir: davet koduyla yeni uye olunur ya da mevcut
+ * uye Google / Apple / e-posta koduyla girer. Daha once uye olmayan biri
+ * Google ile GIREMEZ; hesap yalnizca davet kodundan sonra acilir.
+ * Prototipte gercek Google yok: hesap e-posta adresiyle temsil edilir.
+ */
+export type Hesap = { yontem: 'google' | 'apple' | 'eposta'; eposta: string };
+
 type Durum = {
+  /** Bagli giris hesabi (davetten sonra acilir) */
+  hesap?: Hesap;
   /** Davet kodu dogrulandi mi (davet eden kisi id) */
   davetEden?: string;
   /** Profil doldurma bitti mi */
@@ -78,6 +89,11 @@ const BASLANGIC: Durum = {
 };
 
 const ANAHTAR = 'excomplus-prototip-v1';
+/** Bu cihazda uye olmus hesaplar: e-posta -> son durum (cikis yapinca geri girilebilsin) */
+const UYELER_ANAHTAR = 'excomplus-prototip-uyeler';
+const eposta = (e: string) => e.trim().toLocaleLowerCase('tr');
+/** Prototipte hazir bir uye: deneme@ornek.com ile "Zaten uyeyim" denenebilir */
+export const DENEME_HESABI = 'deneme@ornek.com';
 
 type Baglam = Durum & {
   hazir: boolean;
@@ -109,6 +125,12 @@ type Baglam = Durum & {
   evSahibiOl: (kulupId: string) => void;
   /** Kulup bulusmasi koy; yeni planin id'sini dondurur. Kulup sohbetine de duser. */
   bulusmaKoy: (p: Omit<Plan, 'id' | 'katilan' | 'evSahibi'>) => string;
+  /** Davet kodundan sonra yeni uyenin giris hesabi baglanir */
+  hesapBagla: (h: Hesap) => void;
+  /** Bu hesap Plus uyesi mi (prototipte bu cihazdaki kayitlar + deneme hesabi) */
+  uyeMi: (adres: string) => boolean;
+  /** Mevcut uye girisi; uye degilse false (yeni hesap acilmaz) */
+  girisYap: (adres: string) => boolean;
   cikis: () => void;
 };
 
@@ -127,8 +149,12 @@ function saatSimdi() {
 export function OturumSaglayici({ children }: { children: ReactNode }) {
   const [durum, setDurum] = useState<Durum>(BASLANGIC);
   const [hazir, setHazir] = useState(false);
+  const [uyeler, setUyeler] = useState<Record<string, Durum>>({});
 
   useEffect(() => {
+    AsyncStorage.getItem(UYELER_ANAHTAR)
+      .then((v) => v && setUyeler(JSON.parse(v)))
+      .catch(() => {});
     AsyncStorage.getItem(ANAHTAR)
       .then((v) => {
         if (!v) return;
@@ -144,6 +170,10 @@ export function OturumSaglayici({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (hazir) AsyncStorage.setItem(ANAHTAR, JSON.stringify(durum)).catch(() => {});
   }, [durum, hazir]);
+
+  useEffect(() => {
+    if (hazir) AsyncStorage.setItem(UYELER_ANAHTAR, JSON.stringify(uyeler)).catch(() => {});
+  }, [uyeler, hazir]);
 
   const deger = useMemo<Baglam>(() => {
     const guncelle = (f: (d: Durum) => Durum) => setDurum(f);
@@ -238,9 +268,27 @@ export function OturumSaglayici({ children }: { children: ReactNode }) {
         return id;
       },
       fikriDestekle: (id) => guncelle((d) => ({ ...d, destekledigimFikirler: ekleCikar(d.destekledigimFikirler, id) })),
-      cikis: () => setDurum(BASLANGIC),
+      hesapBagla: (h) => guncelle((d) => ({ ...d, hesap: { ...h, eposta: eposta(h.eposta) } })),
+      uyeMi: (adres) => {
+        const a = eposta(adres);
+        const suAnkiHesap = !!durum.uye && !!durum.hesap && eposta(durum.hesap.eposta) === a;
+        return a === DENEME_HESABI || !!uyeler[a] || suAnkiHesap;
+      },
+      girisYap: (adres) => {
+        const a = eposta(adres);
+        const kayit = uyeler[a] ?? (a === DENEME_HESABI ? denemeUyesi() : undefined);
+        if (!kayit) return false;
+        setDurum({ ...BASLANGIC, ...kayit });
+        return true;
+      },
+      cikis: () => {
+        // Uye olmus hesabin son hali saklanir; "Zaten uyeyim" ile ayni hesapla geri girilir
+        const { uye, hesap } = durum;
+        if (uye && hesap) setUyeler((u) => ({ ...u, [eposta(hesap.eposta)]: durum }));
+        setDurum(BASLANGIC);
+      },
     };
-  }, [durum, hazir]);
+  }, [durum, hazir, uyeler]);
 
   return <OturumBaglami.Provider value={deger}>{children}</OturumBaglami.Provider>;
 }
@@ -249,4 +297,34 @@ export function useOturum() {
   const b = useContext(OturumBaglami);
   if (!b) throw new Error('useOturum, OturumSaglayici icinde kullanilmali');
   return b;
+}
+
+/** Hazir deneme uyesi: dolu bir profil, birkac baglanti ve kulup */
+function denemeUyesi(): Durum {
+  return {
+    ...BASLANGIC,
+    hesap: { yontem: 'google', eposta: DENEME_HESABI },
+    davetEden: 'ayse',
+    uye: {
+      ad: 'Deniz Deneme',
+      sehir: 'İstanbul',
+      semt: 'Kadıköy',
+      ilgiler: ['tenis', 'muze-ve-sergi', 'kahve', 'kitap'],
+      muzik: ['jazz', 'alternatif-rock-indie'],
+      sanatcilar: ['Norah Jones', 'Duman'],
+      davetEden: 'ayse',
+      tanidiklar: ['ayse', 'selin', 'burcu'],
+      pozisyon: 'Ürün yöneticisi',
+      sirket: 'Bir bankada',
+      eskiSirketler: ['Turkcell'],
+      universite: 'Boğaziçi Üniversitesi',
+      bolum: 'İşletme',
+      lise: 'Kadıköy Anadolu Lisesi',
+      uzmanliklar: ['Ürün yönetimi'],
+      hakkinda: 'Prototipteki hazır deneme hesabı.',
+    },
+    baglantilar: ['ayse'],
+    kuluplerim: ['tenis', 'sergi', 'kitap'],
+    davetKodum: 'DENEME',
+  };
 }

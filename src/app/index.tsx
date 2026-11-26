@@ -1,5 +1,5 @@
 import { Redirect, router } from 'expo-router';
-import { View } from 'react-native';
+import { Pressable, View } from 'react-native';
 
 import { Dugme, Ekran, Logo, Metin } from '@/components/temel';
 import { Bosluk, Colors, Kose, Marka, Yazi } from '@/constants/theme';
@@ -7,13 +7,14 @@ import { useOturum } from '@/data/oturum';
 
 /**
  * KARSILAMA (uyenin yolculugu 1)
- * Plus davetle girilen bir yer: ana dugme "Davet kodum var".
- * Kodu olmayan basvuru birakir.
+ * Iki kapi: yeni uye "Davet kodum var", mevcut uye "Zaten uyeyim"
+ * (Google / Apple / e-posta). Kodu olmayan basvuru birakir; uye olmayan
+ * Google ile giremez.
  */
 export default function Karsilama() {
   const { uye, davetEden } = useOturum();
   if (uye) return <Redirect href="/ana-sayfa" />;
-  if (davetEden) return <Redirect href="/profil-doldur" />;
+  if (davetEden) return <Redirect href="/hesap-olustur" />;
 
   return (
     <Ekran kaydir={false} icerikStil={{ padding: Bosluk.lg, justifyContent: 'space-between' }}>
@@ -26,7 +27,7 @@ export default function Karsilama() {
           <View style={{ position: 'absolute', width: 180, height: 180, borderRadius: 90, backgroundColor: Marka.sari, top: -40, right: -30, opacity: 0.8 }} />
           <View style={{ position: 'absolute', width: 120, height: 120, borderRadius: 60, backgroundColor: Marka.turuncu, top: 50, right: 70, opacity: 0.85 }} />
           <View style={{ position: 'absolute', width: 90, height: 90, borderRadius: Kose.xl, backgroundColor: Marka.lacivert, top: 20, left: 24, transform: [{ rotate: '-12deg' }] }} />
-          <Metin style={{ fontSize: 15, color: Colors.text, fontWeight: '600' }}>Yalnızca davetle ✉️</Metin>
+          <Metin style={{ fontSize: 15, color: Colors.text, fontWeight: '600' }}>Yalnızca davetle</Metin>
         </View>
         <Metin style={{ ...Yazi.ekranBasligi, fontSize: 34, lineHeight: 40 }}>
           Güvendiğin insanların{'\n'}tanıştırdığı bir çevre.
@@ -38,7 +39,12 @@ export default function Karsilama() {
 
       <View style={{ gap: Bosluk.md, paddingBottom: Bosluk.lg }}>
         <Dugme baslik="Davet kodum var" onPress={() => router.push('/davet-kodu')} />
-        <Dugme baslik="Kodum yok, başvur" tur="cizgili" onPress={() => router.push('/basvuru')} />
+        <Dugme baslik="Zaten üyeyim" tur="cizgili" onPress={() => router.push('/giris')} />
+        <Pressable onPress={() => router.push('/basvuru')} hitSlop={8} style={{ alignSelf: 'center', paddingVertical: 4 }}>
+          <Metin style={{ ...Yazi.ikincil, color: Colors.textMuted }}>
+            Davet kodun yok mu? <Metin style={{ ...Yazi.ikincil, color: Colors.accent, fontWeight: '700' }}>Başvuru bırak</Metin>
+          </Metin>
+        </Pressable>
       </View>
     </Ekran>
   );

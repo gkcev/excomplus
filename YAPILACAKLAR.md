@@ -31,4 +31,4 @@ kurallari: src/data/eslestirme.ts (strateji sunumu sayfa 8).
 - [x] Profili duzenle ExCom'dan aynen: 6 acilir kart, 173 ilgi (7 kategori, populer + arama + oner), 34 muzik tarzi, uzmanlik listesi (en fazla 6), 211 universite, ulke/sehir + semt, dogum gunu (gun/ay), onceki sirketler
 - [x] Ortak noktalar (niyet sorusu yerine): kayitta "Ortak noktalarini ekle" (Hobilerin zorunlu; Okulun, Isin, Muzigin istege bagli); eslestirme okul / sirket / uzmanlik / hobi / sanatci / semt; "Ortak noktalariniz" karti ve profil sayaci
 - [ ] Kulup turleri: okul, is, muzik kulupleri ("Bogazicililer", "Eski Garantililer", "Duman sevenler")
-- [ ] Giris: "Zaten uyeyim" (Google / Apple / e-posta) yalnizca mevcut uyeler; yeni uye yalnizca davet koduyla
+- [x] Giris (prototip): "Zaten uyeyim" (Google / Apple / e-posta kodu) yalnizca mevcut uyeler; yeni hesap yalnizca davet kodundan sonra "Hesabini olustur" ile. Gercek Google/Apple girisi Supabase ile gelecek

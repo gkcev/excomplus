@@ -30,7 +30,7 @@ const KAYIT_TARZLARI = MUZIK_KATALOGU.alanlar.filter((a) => a.populer).slice(0, 
  * Medeni durum sorulmaz, dogum yili sorulmaz.
  */
 export default function ProfilDoldur() {
-  const { davetEden, uye, profiliKaydet } = useOturum();
+  const { davetEden, hesap, uye, profiliKaydet } = useOturum();
   const [adim, setAdim] = useState(1);
   const [ad, setAd] = useState('');
   const [foto, setFoto] = useState<string>();
@@ -50,6 +50,8 @@ export default function ProfilDoldur() {
 
   if (uye) return <Redirect href="/ana-sayfa" />;
   if (!davetEden) return <Redirect href="/" />;
+  // Davetli once hesabini olusturur (Google / Apple / e-posta)
+  if (!hesap) return <Redirect href="/hesap-olustur" />;
   const davetci = kisiBul(davetEden);
 
   const eklenen = [ilgiler.length >= 3, !!(universite || lise), !!(sirket || pozisyon || eskiSirketler.length), muzik.length > 0 || sanatci.trim() !== ''].filter(Boolean).length;
