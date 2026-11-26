@@ -23,6 +23,9 @@ Yeni bir makinede ise baslamadan once `git pull`.
 Web surumu EAS Hosting'de: https://excomplus.expo.app
 Yeniden yayinlamak: `npm run yayinla` (Expo hesabi: gkcevi). Link herkese
 acik; prototipte veriler her kisinin kendi tarayicisinda tutulur.
+Yayindan sonra kontrol: `curl -s https://excomplus.expo.app/ | grep -o 'entry-[a-f0-9]*'`
+dist/index.html ile ayni olmali. Degilse (26 Kasim 2026'da oldu) son yuklemeyi
+elle one al: `npx eas-cli deploy:alias --prod --id <Deployment URL'deki kimlik>`.
 
 ## Bekleyen isler
 Acik basliklar ve ExCom'dan kopyalanacak ozellikler YAPILACAKLAR.md
