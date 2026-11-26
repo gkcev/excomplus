@@ -6,6 +6,7 @@ import { router } from 'expo-router';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { Icon } from '@/components/icon';
+import { OrtakNoktaSatiri } from '@/components/ortak-nokta';
 import { Avatar, AvatarYigini, Dugme, IlerlemeCubugu, Kart, KulupGorseli, Metin, Neden } from '@/components/temel';
 import { Bosluk, Colors, Durum, Marka, Yazi } from '@/constants/theme';
 import type { Oneri } from '@/data/eslestirme';
@@ -111,7 +112,7 @@ export function KisiKarti({ oneri }: { oneri: Oneri }) {
           {k.ilgiler.slice(0, 2).map(ilgiAdi).join(' · ')}
         </Metin>
       </View>
-      {oneri.nedenler[0] && <Neden metin={oneri.nedenler[0]} />}
+      {oneri.ortakNoktalar[0] && <OrtakNoktaSatiri kucuk nokta={oneri.ortakNoktalar[0]} />}
       </View>
     </Kart>
   );

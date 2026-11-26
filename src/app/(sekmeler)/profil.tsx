@@ -5,6 +5,7 @@ import { Platform, Pressable, View } from 'react-native';
 
 import { FotoIzgarasi, EN_FAZLA_FOTO } from '@/components/fotolar';
 import { Icon, type IconName } from '@/components/icon';
+import { OrtakNoktaSayaci } from '@/components/ortak-nokta';
 import { Avatar, Dugme, Ekran, Kart, KulupGorseli, Metin } from '@/components/temel';
 import { Bosluk, Colors, Durum, Kose, Marka, Yazi } from '@/constants/theme';
 import { davetPaylas } from '@/data/davet';
@@ -122,6 +123,8 @@ export default function Profil() {
             Eksik: {eksikler.join(', ')}. Dolu profiller daha isabetli öneri alır.
           </Metin>
         )}
+        {/* Ortak noktalar: hangisini eklediysen oradan arkadas onerilir */}
+        <OrtakNoktaSayaci u={uye} />
 
         <View style={{ flexDirection: 'row', gap: Bosluk.sm }}>
           <Dugme style={{ flex: 1 }} kucuk baslik="Düzenle" ikon="pencil" tur="cizgili" onPress={() => router.push('/profil-duzenle')} />

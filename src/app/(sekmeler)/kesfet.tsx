@@ -3,7 +3,8 @@ import { useState } from 'react';
 import { ScrollView, View } from 'react-native';
 
 import { KulupKarti } from '@/components/kartlar';
-import { Avatar, BolumBasligi, Cip, Dugme, Ekran, IlerlemeCubugu, Kart, KulupGorseli, Metin, Neden } from '@/components/temel';
+import { Avatar, BolumBasligi, Cip, Dugme, Ekran, IlerlemeCubugu, Kart, KulupGorseli, Metin } from '@/components/temel';
+import { OrtakNoktaSatiri } from '@/components/ortak-nokta';
 import { Bosluk, Colors, Marka, Yazi } from '@/constants/theme';
 import { kisiOnerileri } from '@/data/eslestirme';
 import { FIKIR_ESIGI, fikirSayisi, ilgiAdi, KULUP_FIKIRLERI, KULUPLER } from '@/data/ornek';
@@ -29,7 +30,7 @@ export default function Kesfet() {
       {sekme === 'kisiler' ? (
         <View style={{ gap: Bosluk.md }}>
           <Metin style={{ ...Yazi.ikincil, color: Colors.textMuted }}>
-            Ortak ilgi alanı ve ortak tanıdığa göre sıralı. Her önerinin nedeni yazıyor.
+            Ortak noktalarınıza göre sıralı: okul, iş, hobi, müzik, semt.
           </Metin>
           {oneriler.map((o) => (
             <Kart key={o.kisi.id} onPress={() => router.push(`/kisi/${o.kisi.id}`)} style={{ padding: Bosluk.lg, flexDirection: 'row', gap: Bosluk.md }}>
@@ -42,8 +43,8 @@ export default function Kesfet() {
                 <Metin style={{ ...Yazi.ikincil, color: Colors.textMuted }}>
                   {o.kisi.pozisyon} · {o.kisi.semt}
                 </Metin>
-                {o.nedenler.slice(0, 2).map((n) => (
-                  <Neden key={n} metin={n} />
+                {o.ortakNoktalar.slice(0, 2).map((n) => (
+                  <OrtakNoktaSatiri key={n.metin} kucuk nokta={n} />
                 ))}
               </View>
             </Kart>

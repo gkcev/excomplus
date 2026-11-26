@@ -5,7 +5,8 @@ import { Linking, Pressable, View } from 'react-native';
 import { FotoIzgarasi } from '@/components/fotolar';
 import { Icon, type IconName } from '@/components/icon';
 import { SpotifyOynatici } from '@/components/spotify';
-import { Avatar, Dugme, Ekran, Kart, Metin, Neden, UstBar } from '@/components/temel';
+import { OrtakNoktaSatiri } from '@/components/ortak-nokta';
+import { Avatar, Dugme, Ekran, Kart, Metin, UstBar } from '@/components/temel';
 import { Bosluk, Colors, Kose, Marka, Yazi } from '@/constants/theme';
 import { kisiPuani } from '@/data/eslestirme';
 import { ilgiAdi, kisiBul, tamAd, type Kisi } from '@/data/ornek';
@@ -102,12 +103,12 @@ export default function KisiProfili() {
         </View>
       )}
 
-      {/* ---------------- Neden oneriyoruz ---------------- */}
-      {o && o.nedenler.length > 0 && (
+      {/* ---------------- Ortak noktalariniz (en guclu once) ---------------- */}
+      {o && o.ortakNoktalar.length > 0 && (
         <Kart style={{ padding: Bosluk.lg, gap: Bosluk.sm, backgroundColor: Marka.sahne }}>
-          <Metin style={Yazi.kartBasligi}>Neden öneriyoruz?</Metin>
-          {o.nedenler.map((n) => (
-            <Neden key={n} metin={n} />
+          <Metin style={Yazi.kartBasligi}>Ortak noktalarınız</Metin>
+          {o.ortakNoktalar.map((n) => (
+            <OrtakNoktaSatiri key={n.metin} nokta={n} />
           ))}
         </Kart>
       )}

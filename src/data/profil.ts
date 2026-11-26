@@ -7,9 +7,9 @@ import type { Uye } from '@/data/oturum';
  */
 const ALANLAR: { ad: string; dolu: (u: Uye) => boolean }[] = [
   { ad: 'profil fotoğrafı', dolu: (u) => !!u.foto },
-  { ad: 'iş', dolu: (u) => !!(u.pozisyon || u.sirket) },
+  { ad: 'iş', dolu: (u) => !!(u.pozisyon || u.sirket || (u.eskiSirketler ?? []).length) },
   { ad: 'hakkımda', dolu: (u) => (u.hakkinda ?? '').trim().length > 0 },
-  { ad: 'üniversite', dolu: (u) => !!u.universite },
+  { ad: 'eğitim', dolu: (u) => !!(u.universite || u.lise) },
   { ad: 'uzmanlık alanları', dolu: (u) => (u.uzmanliklar ?? []).length > 0 },
   { ad: 'ilgi alanları', dolu: (u) => u.ilgiler.length >= 3 },
   { ad: 'müzik zevki', dolu: (u) => u.muzik.length > 0 || (u.sanatcilar ?? []).length > 0 || !!u.sarki },
