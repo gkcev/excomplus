@@ -5,6 +5,9 @@
  */
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import { ilgiCevir } from '@/data/ilgi-alanlari';
+import { tarzCevir, type ProfilSarkisi } from '@/data/muzik';
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 
 import type { Ben } from '@/data/eslestirme';
@@ -21,8 +24,15 @@ export type Uye = Ben & {
   sanatcilar?: string[];
   /** Profil galerisi: en fazla 6 fotograf (prototipte cihazda, data URI) */
   fotolar?: string[];
-  /** Profil sarkisi (Spotify) */
-  sarki?: { spotifyId: string };
+  /** Profil sarkisi (Spotify; ad ve kapak oEmbed'den) */
+  sarki?: ProfilSarkisi;
+  /** Dogum gunu: yalnizca gun ve ay ("03-14"); yil sorulmaz, yas gosterilmez */
+  dogumGunu?: string;
+  lise?: string;
+  /** Mezuniyet yillari: yalnizca arka planda (+-8 yil yakinlik), profilde gorunmez */
+  liseYil?: string;
+  /** Onceki isyerleri (kariyer niyeti) */
+  eskiSirketler?: string[];
   /** Profil fotografi (zorunlu). Prototipte cihazda data URI olarak saklanir. */
   foto?: string;
 };
@@ -121,7 +131,11 @@ export function OturumSaglayici({ children }: { children: ReactNode }) {
   useEffect(() => {
     AsyncStorage.getItem(ANAHTAR)
       .then((v) => {
-        if (v) setDurum({ ...BASLANGIC, ...JSON.parse(v) });
+        if (!v) return;
+        const kayit = { ...BASLANGIC, ...JSON.parse(v) } as Durum;
+        // Eski ilgi / tarz kimlikleri ExCom kataloguna cevrilir (26 Kasim 2026)
+        if (kayit.uye) kayit.uye = { ...kayit.uye, ilgiler: ilgiCevir(kayit.uye.ilgiler), muzik: tarzCevir(kayit.uye.muzik) };
+        setDurum(kayit);
       })
       .catch(() => {})
       .finally(() => setHazir(true));

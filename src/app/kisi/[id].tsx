@@ -11,7 +11,8 @@ import { kisiPuani } from '@/data/eslestirme';
 import { ilgiAdi, kisiBul, tamAd, type Kisi } from '@/data/ornek';
 import { kisiGalerisi } from '@/data/fotolar';
 import { useOturum } from '@/data/oturum';
-import { linkedinKisa } from '@/data/profil';
+import { tarzAdi } from '@/data/muzik';
+import { dogumGunuYazisi, linkedinKisa } from '@/data/profil';
 
 /**
  * KISI PROFILI (ExCom'daki ayrintili profilden uyarlandi)
@@ -35,6 +36,7 @@ export default function KisiProfili() {
           id: 'ben', ad: uye.ad, soyadHarf: '', sehir: uye.sehir, semt: uye.semt, ilgiler: uye.ilgiler, muzik: uye.muzik,
           sirket: uye.sirket, pozisyon: uye.pozisyon, hakkinda: uye.hakkinda, davetEden: uye.davetEden, tanidiklar: uye.tanidiklar,
           universite: uye.universite, bolum: uye.bolum, uzmanliklar: uye.uzmanliklar, sanatcilar: uye.sanatcilar, linkedin: uye.linkedin,
+          lise: uye.lise, eskiSirketler: uye.eskiSirketler, dogumGunu: uye.dogumGunu,
         }
       : kisiBul(id);
   if (!k || !uye) return <Ekran ust={<UstBar />}><Metin>Kişi bulunamadı.</Metin></Ekran>;
@@ -56,7 +58,10 @@ export default function KisiProfili() {
     { ikon: 'id-card', etiket: 'Pozisyon', deger: k.pozisyon },
     { ikon: 'building', etiket: 'Şirket', deger: k.sirket },
     { ikon: 'map-pin', etiket: 'Yaşadığı semt', deger: [k.semt, k.sehir].filter(Boolean).join(', ') },
+    { ikon: 'building', etiket: 'Önceki şirketler', deger: (k.eskiSirketler ?? []).join(', ') },
     { ikon: 'mezuniyet', etiket: 'Üniversite', deger: [k.universite, k.bolum].filter(Boolean).join(' · ') },
+    { ikon: 'mezuniyet', etiket: 'Lise', deger: k.lise },
+    { ikon: 'gift', etiket: 'Doğum günü', deger: dogumGunuYazisi(k.dogumGunu) },
   ];
   const doluBilgiler = bilgiler.filter((b) => (b.deger ?? '').trim() !== '');
 
@@ -171,7 +176,7 @@ export default function KisiProfili() {
           {sarki && <SpotifyOynatici spotifyId={sarki.spotifyId} />}
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
             {k.muzik.map((m) => (
-              <Hap key={m} yazi={m} ortak={ortakTarz.includes(m)} />
+              <Hap key={m} yazi={tarzAdi(m)} ortak={ortakTarz.includes(m)} />
             ))}
           </View>
           {(k.sanatcilar ?? []).length > 0 && (

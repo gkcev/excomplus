@@ -45,3 +45,11 @@ export const icerikOrtala = {
   maxWidth: 560,
   alignSelf: 'center',
 } as const;
+
+/*
+  ExCom'dan aynen kopyalanan bilesenler (profil duzenleme seciciler) ExCom'un
+  olcu adlarini kullaniyor; degerler ExCom'la ayni.
+*/
+export const Spacing = { xs: 4, sm: 8, md: 12, lg: 16, xl: 16, xxl: 24, xxxl: 32 } as const;
+export const Radius = { sm: 8, md: 12, lg: 16, xl: 20, blok: 28, pill: 999 } as const;
+export const FontSize = { caption: 12, small: 13, body: 15, title: 17, heading: 20, display: 28, hero: 34 } as const;

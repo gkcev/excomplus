@@ -1,3 +1,5 @@
+import { ILGI_KATALOGU } from '@/data/ilgi-alanlari';
+
 /**
  * PROTOTIP ORNEK VERISI
  * Gercek veritabani (ayri Supabase projesi) baglanana kadar her sey buradan.
@@ -6,30 +8,15 @@
 
 export type IlgiAlani = { id: string; ad: string; simge: string };
 
-/** Ilgi alanlari (strateji: hobiler; en az 3 secilir) */
-export const ILGI_ALANLARI: IlgiAlani[] = [
-  { id: 'tenis', ad: 'Tenis', simge: '🎾' },
-  { id: 'padel', ad: 'Padel', simge: '🏓' },
-  { id: 'kosu', ad: 'Koşu', simge: '🏃' },
-  { id: 'yoga', ad: 'Yoga', simge: '🧘' },
-  { id: 'doga', ad: 'Doğa yürüyüşü', simge: '🥾' },
-  { id: 'yelken', ad: 'Yelken', simge: '⛵' },
-  { id: 'sergi', ad: 'Sergi', simge: '🖼️' },
-  { id: 'kitap', ad: 'Kitap', simge: '📚' },
-  { id: 'caz', ad: 'Caz', simge: '🎷' },
-  { id: 'sinema', ad: 'Sinema', simge: '🎬' },
-  { id: 'fotograf', ad: 'Fotoğraf', simge: '📷' },
-  { id: 'yemek', ad: 'Yemek', simge: '🍽️' },
-  { id: 'sarap', ad: 'Şarap', simge: '🍷' },
-  { id: 'kahve', ad: 'Kahve', simge: '☕' },
-  { id: 'seyahat', ad: 'Seyahat', simge: '✈️' },
-  { id: 'teknoloji', ad: 'Teknoloji', simge: '💻' },
-  { id: 'girisim', ad: 'Girişim', simge: '🚀' },
-  { id: 'cocuklu', ad: 'Çocuklu aile etkinlikleri', simge: '🧸' },
-];
+/**
+ * Ilgi alanlari: ExCom katalogu (7 kategori, 173 secenek; data/ilgi-alanlari.ts).
+ * Emoji yok (simge bos); kayitta populer 12 + "Daha fazla".
+ */
+export const ILGI_ALANLARI: IlgiAlani[] = ILGI_KATALOGU.alanlar.map((a) => ({ id: a.id, ad: a.ad, simge: '' }));
 
-export const ilgiAdi = (id: string) => ILGI_ALANLARI.find((i) => i.id === id)?.ad ?? id;
-export const ilgiSimge = (id: string) => ILGI_ALANLARI.find((i) => i.id === id)?.simge ?? '•';
+export const ilgiAdi = (id: string) => ILGI_KATALOGU.bul.get(id)?.ad ?? id;
+/** Emoji kaldirildi (kullanici istegi); eski cagrilar bozulmasin diye bos doner */
+export const ilgiSimge = (_id: string) => '';
 
 export const SEHIRLER = ['İstanbul', 'Ankara', 'İzmir'];
 export const SEMTLER: Record<string, string[]> = {
@@ -62,6 +49,10 @@ export type Kisi = {
   /** Sevdigi sanatcilar (muzik zevki karti) */
   sanatcilar?: string[];
   linkedin?: string;
+  lise?: string;
+  eskiSirketler?: string[];
+  /** "03-14": yalnizca gun ve ay */
+  dogumGunu?: string;
 };
 
 /** Muzik tarzlari (profil doldurma ve duzenleme) */
@@ -71,45 +62,49 @@ export const MUZIK_TARZLARI = ['caz', 'rock', 'pop', 'klasik', 'indie', 'elektro
 export const KISILER: Kisi[] = [
   {
     id: 'ayse', ad: 'Ayşe', soyadHarf: 'K', sehir: 'İstanbul', semt: 'Kadıköy',
-    ilgiler: ['sergi', 'kitap', 'yoga', 'kahve'], muzik: ['caz'],
+    ilgiler: ['muze-ve-sergi', 'kitap', 'yoga', 'kahve'], muzik: ['jazz'],
     sirket: 'Bir yazılım şirketi', pozisyon: 'Ürün yöneticisi',
     hakkinda: 'Hafta sonları galeri gezip kahve içmeyi seviyorum.',
     tanidiklar: ['selin', 'mert', 'burcu', 'baris', 'deniz'], mezuniyet: 2012,
     universite: 'Boğaziçi Üniversitesi', bolum: 'İşletme', uzmanliklar: ['Ürün yönetimi', 'Kullanıcı araştırması'], sanatcilar: ['Norah Jones', 'Kalben'], linkedin: 'linkedin.com/in/ornek-ayse',
+    lise: 'Kadıköy Anadolu Lisesi', eskiSirketler: ['Turkcell', 'Hepsiburada'], dogumGunu: '03-14',
   },
   {
     id: 'selin', ad: 'Selin', soyadHarf: 'D', sehir: 'İstanbul', semt: 'Kadıköy',
-    ilgiler: ['tenis', 'sergi', 'fotograf', 'kahve'], muzik: ['caz', 'indie'],
+    ilgiler: ['tenis', 'muze-ve-sergi', 'fotograf', 'kahve'], muzik: ['jazz', 'alternatif-rock-indie'],
     sirket: 'Bir danışmanlık şirketi', pozisyon: 'Kıdemli danışman',
     hakkinda: 'Sabah teniscisi, akşam sergi gezgini.',
     davetEden: 'ayse', tanidiklar: ['ayse', 'burcu', 'deniz', 'can'], mezuniyet: 2014,
     universite: 'ODTÜ', bolum: 'Endüstri Mühendisliği', uzmanliklar: ['Strateji', 'Süreç tasarımı'], sanatcilar: ['Gregory Porter', 'Bon Iver'],
+    eskiSirketler: ['Deloitte'], dogumGunu: '11-28',
   },
   {
     id: 'mert', ad: 'Mert', soyadHarf: 'K', sehir: 'İstanbul', semt: 'Beşiktaş',
-    ilgiler: ['teknoloji', 'kosu', 'girisim', 'kahve'], muzik: ['rock'],
+    ilgiler: ['teknoloji-urunleri', 'kosu', 'girisimcilik', 'kahve'], muzik: ['turkce-rock'],
     sirket: 'Bir fintek girişimi', pozisyon: 'Kurucu ortak',
     hakkinda: 'Pazar sabahları Caddebostan sahilinde koşuyorum.',
     davetEden: 'ayse', tanidiklar: ['ayse', 'baris', 'can', 'emre'], mezuniyet: 2011,
     universite: 'İTÜ', bolum: 'Bilgisayar Mühendisliği', uzmanliklar: ['Ödeme sistemleri', 'Girişimcilik'], sanatcilar: ['Duman', 'Arctic Monkeys'], linkedin: 'linkedin.com/in/ornek-mert',
+    lise: 'Robert Kolej', eskiSirketler: ['Garanti BBVA', 'Getir'],
   },
   {
     id: 'burcu', ad: 'Burcu', soyadHarf: 'A', sehir: 'İstanbul', semt: 'Ataşehir',
-    ilgiler: ['sergi', 'fotograf', 'seyahat', 'sinema'], muzik: ['caz'],
+    ilgiler: ['muze-ve-sergi', 'fotograf', 'seyahat', 'sinema'], muzik: ['jazz'],
     sirket: 'Bir banka', pozisyon: 'Pazarlama müdürü',
     tanidiklar: ['ayse', 'selin', 'elif'], mezuniyet: 2010,
     universite: 'Bilkent Üniversitesi', bolum: 'İletişim', uzmanliklar: ['Marka yönetimi', 'Dijital pazarlama'], sanatcilar: ['Chet Baker', 'Sezen Aksu'],
+    lise: 'Kadıköy Anadolu Lisesi', eskiSirketler: ['Unilever'],
   },
   {
     id: 'baris', ad: 'Barış', soyadHarf: 'T', sehir: 'İstanbul', semt: 'Ataşehir',
-    ilgiler: ['tenis', 'seyahat', 'padel', 'sarap'], muzik: ['pop'],
+    ilgiler: ['tenis', 'seyahat', 'padel', 'sarap'], muzik: ['turkce-pop'],
     sirket: 'Bir lojistik şirketi', pozisyon: 'Operasyon direktörü',
     davetEden: 'mert', tanidiklar: ['mert', 'ayse', 'can'], mezuniyet: 2009,
     universite: 'Yıldız Teknik Üniversitesi', bolum: 'Lojistik', uzmanliklar: ['Tedarik zinciri', 'Operasyon'], sanatcilar: ['Tarkan', 'Dua Lipa'],
   },
   {
     id: 'elif', ad: 'Elif', soyadHarf: 'S', sehir: 'İstanbul', semt: 'Üsküdar',
-    ilgiler: ['kitap', 'seyahat', 'yemek', 'sergi'], muzik: ['klasik'],
+    ilgiler: ['kitap', 'seyahat', 'gastronomi', 'muze-ve-sergi'], muzik: ['klasik-muzik'],
     sirket: 'Bir yayınevi', pozisyon: 'Editör',
     hakkinda: 'Ayda bir kitap, yılda bir uzun yol.',
     davetEden: 'burcu', tanidiklar: ['burcu', 'deniz'], mezuniyet: 2015,
@@ -117,28 +112,29 @@ export const KISILER: Kisi[] = [
   },
   {
     id: 'can', ad: 'Can', soyadHarf: 'Y', sehir: 'İstanbul', semt: 'Sarıyer',
-    ilgiler: ['doga', 'yelken', 'fotograf', 'kosu'], muzik: ['indie'],
+    ilgiler: ['doga-yuruyusu', 'yelken', 'fotograf', 'kosu'], muzik: ['alternatif-rock-indie'],
     sirket: 'Bir enerji şirketi', pozisyon: 'Proje mühendisi',
     tanidiklar: ['selin', 'mert', 'baris'], mezuniyet: 2013,
     universite: 'İTÜ', bolum: 'Makine Mühendisliği', uzmanliklar: ['Yenilenebilir enerji', 'Proje yönetimi'], sanatcilar: ['Bon Iver', 'Gaye Su Akyol'],
   },
   {
     id: 'deniz', ad: 'Deniz', soyadHarf: 'Ö', sehir: 'İstanbul', semt: 'Kadıköy',
-    ilgiler: ['yoga', 'kitap', 'kahve', 'cocuklu'], muzik: ['caz'],
+    ilgiler: ['yoga', 'kitap', 'kahve', 'cocuklu'], muzik: ['jazz'],
     sirket: 'Bir ilaç şirketi', pozisyon: 'İK iş ortağı',
     tanidiklar: ['ayse', 'selin', 'elif'], mezuniyet: 2008,
     universite: 'Marmara Üniversitesi', bolum: 'Psikoloji', uzmanliklar: ['Yetenek yönetimi', 'Koçluk'], sanatcilar: ['Norah Jones', 'Kalben'],
   },
   {
     id: 'emre', ad: 'Emre', soyadHarf: 'B', sehir: 'İstanbul', semt: 'Maslak',
-    ilgiler: ['teknoloji', 'padel', 'sarap', 'yemek'], muzik: ['elektronik'],
+    ilgiler: ['teknoloji-urunleri', 'padel', 'sarap', 'gastronomi'], muzik: ['house'],
     sirket: 'Bir e-ticaret şirketi', pozisyon: 'Mühendislik müdürü',
     tanidiklar: ['mert'], mezuniyet: 2012,
     universite: 'Sabancı Üniversitesi', bolum: 'Bilgisayar Bilimi', uzmanliklar: ['Yazılım mimarisi', 'Ekip liderliği'], sanatcilar: ['Bonobo', 'Mabel Matiz'], linkedin: 'linkedin.com/in/ornek-emre',
+    eskiSirketler: ['Trendyol', 'Microsoft'], dogumGunu: '07-02',
   },
   {
     id: 'zeynep', ad: 'Zeynep', soyadHarf: 'E', sehir: 'İzmir', semt: 'Alsancak',
-    ilgiler: ['yelken', 'yemek', 'sarap', 'seyahat'], muzik: ['caz'],
+    ilgiler: ['yelken', 'gastronomi', 'sarap', 'seyahat'], muzik: ['jazz'],
     sirket: 'Bir turizm şirketi', pozisyon: 'Genel müdür yardımcısı',
     tanidiklar: ['can'], mezuniyet: 2007,
     universite: 'Ege Üniversitesi', bolum: 'Turizm İşletmeciliği', uzmanliklar: ['Otel yönetimi', 'Müşteri deneyimi'], sanatcilar: ['Gregory Porter', 'Sezen Aksu'],
@@ -184,21 +180,21 @@ export const PLANLAR: Plan[] = [
   {
     id: 'sergi-turu', baslik: 'Rehberli sergi turu', tur: 'Küçük plan',
     gun: 'Cumartesi', saat: '11.00', semt: 'Tophane', mekan: 'İstanbul Modern',
-    kontenjan: 12, katilan: ['selin', 'burcu', 'ayse'], ilgiler: ['sergi', 'fotograf'],
+    kontenjan: 12, katilan: ['selin', 'burcu', 'ayse'], ilgiler: ['muze-ve-sergi', 'fotograf'],
     gorsel: require('@/assets/images/etkinlik/sergi-turu.jpg'),
     aciklama: 'Bir küratör eşliğinde yeni sergiyi geziyoruz, sonra kahveye oturuyoruz.',
   },
   {
     id: 'pazar-kosusu', baslik: 'Pazar sabahı koşusu', tur: 'Küçük plan',
     gun: 'Pazar', saat: '08.30', semt: 'Caddebostan', mekan: 'Sahil yolu',
-    kontenjan: 15, katilan: ['mert', 'can'], ilgiler: ['kosu', 'doga'],
+    kontenjan: 15, katilan: ['mert', 'can'], ilgiler: ['kosu', 'doga-yuruyusu'],
     gorsel: require('@/assets/images/etkinlik/pazar-kosusu.jpg'),
     aciklama: '5 km rahat tempo. Her seviyeye uygun; bitişte kahvaltı.',
   },
   {
     id: 'sarap-tadimi', baslik: 'Butik şarap tadımı', tur: 'Küçük plan',
     gun: 'Cuma', saat: '19.30', semt: 'Karaköy', mekan: 'Bir butik şaraphane',
-    kontenjan: 10, katilan: ['baris', 'emre', 'zeynep'], ilgiler: ['sarap', 'yemek'],
+    kontenjan: 10, katilan: ['baris', 'emre', 'zeynep'], ilgiler: ['sarap', 'gastronomi'],
     gorsel: require('@/assets/images/etkinlik/sarap-tadimi.jpg'),
     aciklama: 'Ege üreticilerinden altı şarap, eşleşen küçük tabaklar.',
   },
@@ -212,14 +208,14 @@ export const PLANLAR: Plan[] = [
   {
     id: 'soylesi', baslik: 'Söyleşi: İkinci kariyer', tur: 'Küçük plan',
     gun: 'Perşembe', saat: '19.00', semt: 'Levent', mekan: 'Bir ortak çalışma alanı',
-    kontenjan: 40, katilan: ['mert', 'emre', 'burcu', 'deniz'], ilgiler: ['girisim', 'teknoloji'],
+    kontenjan: 40, katilan: ['mert', 'emre', 'burcu', 'deniz'], ilgiler: ['girisimcilik', 'teknoloji-urunleri'],
     gorsel: require('@/assets/images/etkinlik/soylesi.jpg'),
     aciklama: 'Kurumsal hayattan girişime geçen üç konukla sohbet.',
   },
   {
     id: 'yelken', baslik: 'Gün batımında yelken', tur: 'Küçük plan',
     gun: 'Cumartesi', saat: '17.00', semt: 'Kuruçeşme', mekan: 'Marina',
-    kontenjan: 8, katilan: ['can', 'zeynep'], ilgiler: ['yelken', 'doga'],
+    kontenjan: 8, katilan: ['can', 'zeynep'], ilgiler: ['yelken', 'doga-yuruyusu'],
     gorsel: require('@/assets/images/etkinlik/yelken.jpg'),
     aciklama: 'Boğaz’da iki saatlik tekne turu. Deneyim gerekmez.',
   },
@@ -269,13 +265,13 @@ const ilgiyiSecenler = (ilgi: string) => KISILER.filter((k) => k.ilgiler.include
  */
 const TOHUM_KULUPLER: Omit<Kulup, 'uyeler' | 'esik'>[] = [
   { id: 'tenis', ad: 'Tenis Kulübü', ilgi: 'tenis', aciklama: 'Hafta içi iş çıkışı ve hafta sonu sabah maçları.' },
-  { id: 'sergi', ad: 'Sergi Gezenler', ilgi: 'sergi', aciklama: 'Ayda iki sergi, sonrasında sohbet.' },
+  { id: 'sergi', ad: 'Sergi Gezenler', ilgi: 'muze-ve-sergi', aciklama: 'Ayda iki sergi, sonrasında sohbet.' },
   { id: 'kitap', ad: 'Kitap Kulübü', ilgi: 'kitap', evSahibi: 'elif', aciklama: 'Ayın kitabı, ayda bir buluşma.' },
   { id: 'kosu', ad: 'Koşu Grubu', ilgi: 'kosu', aciklama: 'Pazar sabahları sahilde.' },
   { id: 'padel', ad: 'Padel Ekibi', ilgi: 'padel', aciklama: 'Dörtlü maçlar, seviye fark etmez.' },
-  { id: 'yemek', ad: 'Şefin Masası', ilgi: 'yemek', evSahibi: 'emre', aciklama: 'Ayda bir şefin masasında akşam yemeği.' },
+  { id: 'yemek', ad: 'Şefin Masası', ilgi: 'gastronomi', evSahibi: 'emre', aciklama: 'Ayda bir şefin masasında akşam yemeği.' },
   { id: 'fotograf', ad: 'Foto Yürüyüşü', ilgi: 'fotograf', aciklama: 'Şehirde fotoğraf yürüyüşleri.' },
-  { id: 'teknoloji', ad: 'Teknoloji Sohbetleri', ilgi: 'teknoloji', evSahibi: 'mert', aciklama: 'Ayda bir konu, bir konuşmacı.' },
+  { id: 'teknoloji', ad: 'Teknoloji Sohbetleri', ilgi: 'teknoloji-urunleri', evSahibi: 'mert', aciklama: 'Ayda bir konu, bir konuşmacı.' },
 ];
 
 export const KULUPLER: Kulup[] = TOHUM_KULUPLER.map((k) => ({ ...k, uyeler: ilgiyiSecenler(k.ilgi), esik: KULUP_ESIGI }));

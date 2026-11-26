@@ -28,3 +28,6 @@ kurallari: src/data/eslestirme.ts (strateji sunumu sayfa 8).
 - [ ] Ekip paneli: uygunsuz kulup bulusmasini kaldirma
 - [x] Profil (ExCom'dan uyarlandi): tanitim karti + doluluk, 'Profili gor', ayrintili kisi profili (bilgi karti, uzmanlik, muzik, ortaklar, engelle/sikayet), Profili duzenle
 - [x] Profil fotograf galerisi (en fazla 6, tam ekran) ve Spotify profil sarkisi (baglanti yapistirilir). Gercek yukleme veritabaniyla
+- [x] Profili duzenle ExCom'dan aynen: 6 acilir kart, 173 ilgi (7 kategori, populer + arama + oner), 34 muzik tarzi, uzmanlik listesi (en fazla 6), 211 universite, ulke/sehir + semt, dogum gunu (gun/ay), onceki sirketler
+- [ ] Niyet adimi: kayitta "Kimlerle tanismak istersin?" (okul / kariyer / hobi / yakin), sonraki adimlar secime gore
+- [ ] Eslestirme 4 niyete gore (ayni okul, sektor/uzmanlik, onceki sirket, hobi, sanatci); kulup turleri: okul ve meslek kulupleri

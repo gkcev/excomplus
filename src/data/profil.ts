@@ -28,3 +28,11 @@ export function linkedinKisa(adres: string) {
   const m = adres.trim().match(/linkedin\.com\/(in\/[^/?#\s]+)/i);
   return m ? m[1] : '';
 }
+
+const AY_ADLARI = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
+/** "03-14" -> "14 Mart"; yil yok, yas gosterilmez */
+export function dogumGunuYazisi(dogumGunu?: string) {
+  const [ay, gun] = (dogumGunu ?? '').split('-');
+  if (!ay || !gun) return '';
+  return `${Number(gun)} ${AY_ADLARI[Number(ay) - 1] ?? ''}`.trim();
+}

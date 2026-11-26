@@ -4,12 +4,14 @@
  *  Sehir ve semt      sehir 2, semt +2   "Ikiniz de Kadikoy'de"
  *  Ortak tanidik      her biri 1, en fazla 5   "4 ortak tanidiginiz var"
  *  Davet zinciri      ayni kisiyi taniyorsaniz 2   "Ikiniz de Ayse'yi taniyorsunuz"
- *  Muzik              her ortak 1   "Ikiniz de caz dinliyorsunuz"
+ *  Muzik tarzi        her ortak 1   "Ikiniz de Jazz dinliyorsunuz"
+ *  Sanatci            her ortak 2   "Ikiniz de Duman dinliyorsunuz" (ayni konsere gidebilirler)
  *  Yas yakinligi      +-8 yil ise 1   GOSTERILMEZ
  * Kural: haftada 3 oneri, her onerinin nedeni ekranda yazar.
  * Puanlar baslangic onerisi; ilk aylarin verisiyle ayarlanacak.
  */
 
+import { tarzAdi } from '@/data/muzik';
 import { ilgiAdi, KISILER, kisiBul, type Kisi, type Plan } from '@/data/ornek';
 
 export type Ben = {
@@ -18,6 +20,7 @@ export type Ben = {
   semt: string;
   ilgiler: string[];
   muzik: string[];
+  sanatcilar?: string[];
   davetEden?: string;
   tanidiklar: string[];
   mezuniyet?: number;
@@ -84,9 +87,12 @@ export function kisiPuani(ben: Ben, k: Kisi): Oneri {
     if (d) nedenler.push(`İkiniz de ${belirtme(d.ad)} tanıyorsunuz`);
   }
 
+  // Muzik: ayni sanatci tarzdan guclu bir isaret (konser arkadasi)
+  const ortakSanatci = (k.sanatcilar ?? []).filter((s) => (ben.sanatcilar ?? []).includes(s));
   const ortakMuzik = k.muzik.filter((m) => ben.muzik.includes(m));
-  puan += ortakMuzik.length;
-  if (ortakMuzik.length) nedenler.push(`İkiniz de ${ortakMuzik[0]} dinliyorsunuz`);
+  puan += ortakSanatci.length * 2 + ortakMuzik.length;
+  if (ortakSanatci.length) nedenler.push(`İkiniz de ${ortakSanatci[0]} dinliyorsunuz`);
+  else if (ortakMuzik.length) nedenler.push(`İkiniz de ${tarzAdi(ortakMuzik[0])} dinliyorsunuz`);
 
   // Yas yakinligi: puana eklenir, ekranda asla gosterilmez
   if (ben.mezuniyet && k.mezuniyet && Math.abs(ben.mezuniyet - k.mezuniyet) <= 8) puan += 1;

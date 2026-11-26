@@ -3,12 +3,18 @@ import { useState } from 'react';
 import { Pressable, View } from 'react-native';
 
 import { Alan } from '@/components/alan';
+import { Icon } from '@/components/icon';
 import { Avatar, Cip, Dugme, Ekran, IlerlemeCubugu, Metin } from '@/components/temel';
 import { Bosluk, Colors, Kose, Marka, Yazi } from '@/constants/theme';
+import { IlgiAlaniSecici } from '@/components/ilgi-alani-secici';
 import { fotoSec } from '@/data/foto';
-import { ILGI_ALANLARI, MUZIK_TARZLARI, kisiBul, SEHIRLER, SEMTLER } from '@/data/ornek';
+import { ILGI_KATALOGU, POPULER_ILGILER } from '@/data/ilgi-alanlari';
+import { MUZIK_KATALOGU } from '@/data/muzik';
+import { ilgiAdi, kisiBul, SEHIRLER, SEMTLER } from '@/data/ornek';
 import { useOturum } from '@/data/oturum';
 
+/** Kayitta gorunen muzik tarzlari: katalogun populer ilk 6'si */
+const KAYIT_TARZLARI = MUZIK_KATALOGU.alanlar.filter((a) => a.populer).slice(0, 6);
 
 /**
  * PROFIL DOLDURMA (uyenin yolculugu 3) - ZORUNLU, en fazla 3 ekran.
@@ -28,6 +34,7 @@ export default function ProfilDoldur() {
   const [sehir, setSehir] = useState('İstanbul');
   const [semt, setSemt] = useState('');
   const [mezuniyet, setMezuniyet] = useState('');
+  const [ilgiSeciciAcik, setIlgiSeciciAcik] = useState(false);
 
   if (uye) return <Redirect href="/ana-sayfa" />;
   if (!davetEden) return <Redirect href="/" />;
@@ -118,16 +125,22 @@ export default function ProfilDoldur() {
             <Metin style={Yazi.ekranBasligi}>Nelerden hoşlanırsın?</Metin>
             <Metin style={{ color: Colors.textMuted }}>En az 3 tane seç. Sana kişi, plan ve kulüp önerirken en çok buna bakıyoruz.</Metin>
           </View>
+          {/* Populer 12 + listede olmayan secilmisler; tamami "Daha fazla" penceresinde (ExCom) */}
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
-            {ILGI_ALANLARI.map((i) => (
-              <Cip key={i.id} metin={i.ad} simge={i.simge} secili={ilgiler.includes(i.id)} onPress={() => setIlgiler(degistir(ilgiler, i.id))} />
+            {[...POPULER_ILGILER, ...ilgiler.filter((i) => !POPULER_ILGILER.includes(i))].map((id) => (
+              <Cip key={id} metin={ilgiAdi(id)} secili={ilgiler.includes(id)} onPress={() => setIlgiler(degistir(ilgiler, id))} />
             ))}
           </View>
+          <Pressable onPress={() => setIlgiSeciciAcik(true)} style={{ flexDirection: 'row', alignItems: 'center', gap: 6, alignSelf: 'flex-start', paddingVertical: 4 }}>
+            <Icon name="plus" size={16} color={Colors.accent} />
+            <Metin style={{ ...Yazi.etiket, color: Colors.accent }}>Daha fazla ilgi alanı (173 seçenek)</Metin>
+          </Pressable>
+          <IlgiAlaniSecici gorunur={ilgiSeciciAcik} katalog={ILGI_KATALOGU} populer={POPULER_ILGILER} secilenler={ilgiler} tamam={(y) => { setIlgiler(y); setIlgiSeciciAcik(false); }} vazgec={() => setIlgiSeciciAcik(false)} />
           <View style={{ gap: Bosluk.sm }}>
             <Metin style={Yazi.isim}>Müzik zevkin (isteğe bağlı)</Metin>
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
-              {MUZIK_TARZLARI.slice(0, 6).map((m) => (
-                <Cip key={m} metin={m} secili={muzik.includes(m)} onPress={() => setMuzik(degistir(muzik, m))} />
+              {KAYIT_TARZLARI.map((m) => (
+                <Cip key={m.id} metin={m.ad} secili={muzik.includes(m.id)} onPress={() => setMuzik(degistir(muzik, m.id))} />
               ))}
             </View>
           </View>

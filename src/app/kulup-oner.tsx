@@ -1,12 +1,14 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { Pressable, View } from 'react-native';
+import { Pressable, TextInput, View } from 'react-native';
 
 import { Alan } from '@/components/alan';
 import { Icon } from '@/components/icon';
 import { Cip, Dugme, Ekran, Kart, Metin, UstBar } from '@/components/temel';
 import { Bosluk, Colors, Kose, Marka, Yazi } from '@/constants/theme';
-import { FIKIR_ESIGI, ILGI_ALANLARI, KULUP_FIKIRLERI, KULUPLER } from '@/data/ornek';
+import { aramaIcinSade } from '@/components/search-box';
+import { ILGI_KATALOGU, POPULER_ILGILER } from '@/data/ilgi-alanlari';
+import { FIKIR_ESIGI, ilgiAdi, KULUP_FIKIRLERI, KULUPLER } from '@/data/ornek';
 import { useOturum } from '@/data/oturum';
 
 /**
@@ -18,6 +20,7 @@ export default function KulupOner() {
   const { fikirlerim, kulupOner } = useOturum();
   const [ad, setAd] = useState('');
   const [ilgi, setIlgi] = useState('');
+  const [ilgiAra, setIlgiAra] = useState('');
   const [aciklama, setAciklama] = useState('');
   const [evSahibi, setEvSahibi] = useState(true);
 
@@ -49,9 +52,20 @@ export default function KulupOner() {
 
       <View style={{ gap: Bosluk.sm }}>
         <Metin style={{ ...Yazi.etiket, color: Colors.textMuted }}>Hangi ilgi alanı?</Metin>
+        <TextInput
+          value={ilgiAra}
+          onChangeText={setIlgiAra}
+          placeholder="Ara: bisiklet, satranç, yapay zekâ…"
+          placeholderTextColor={Colors.textFaint}
+          style={{ borderWidth: 1, borderColor: Colors.borderInput, borderRadius: Kose.md, backgroundColor: Colors.white, paddingHorizontal: 14, paddingVertical: 10, fontSize: 15, fontFamily: 'Outfit_400Regular', color: Colors.text }}
+        />
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
-          {ILGI_ALANLARI.map((i) => (
-            <Cip key={i.id} metin={i.ad} simge={i.simge} secili={ilgi === i.id} onPress={() => setIlgi(i.id)} />
+          {/* Aramaya gore katalogdan ilk 12; arama bossa populerler */}
+          {(ilgiAra.trim()
+            ? ILGI_KATALOGU.alanlar.filter((a) => a.anahtar.includes(aramaIcinSade(ilgiAra))).slice(0, 12).map((a) => a.id)
+            : [...(ilgi && !POPULER_ILGILER.includes(ilgi) ? [ilgi] : []), ...POPULER_ILGILER]
+          ).map((id) => (
+            <Cip key={id} metin={ilgiAdi(id)} secili={ilgi === id} onPress={() => setIlgi(id)} />
           ))}
         </View>
       </View>

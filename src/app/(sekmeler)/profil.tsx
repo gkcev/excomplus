@@ -11,7 +11,7 @@ import { davetPaylas } from '@/data/davet';
 import { fotoSec } from '@/data/foto';
 import { kisiBul, kulupBul, tamAd } from '@/data/ornek';
 import { useOturum } from '@/data/oturum';
-import { profilDolulugu } from '@/data/profil';
+import { dogumGunuYazisi, profilDolulugu } from '@/data/profil';
 
 /**
  * PROFIL (kendi profilim) - ExCom'daki duzenden uyarlandi:
@@ -36,6 +36,7 @@ export default function Profil() {
   const kunye: { ikon: IconName; yazi: string }[] = [
     { ikon: 'map-pin', yazi: [uye.semt, uye.sehir].filter(Boolean).join(', ') },
     ...(uye.universite ? [{ ikon: 'mezuniyet' as IconName, yazi: uye.universite }] : []),
+    ...(uye.dogumGunu ? [{ ikon: 'gift' as IconName, yazi: dogumGunuYazisi(uye.dogumGunu) }] : []),
   ];
 
   const fotoEkle = async () => {
