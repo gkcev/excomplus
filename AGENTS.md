@@ -41,6 +41,11 @@ baglanir.
 ## Plus nedir (strateji: "Yeni ExCom Ekip Plani", Kasim 2026)
 - Tum beyaz yakalilar icin; uyeler ExCom uyelerinin davetiyle gelir.
 - Giris davet kodu ile; kodu olmayan basvuru birakir.
+- Mevcut uye "Zaten uyeyim" (Google / Apple / e-posta) ile girer; uye olmayan
+  Google ile hesap ACAMAZ, hesap yalnizca davet kodundan sonra acilir.
+- Davet hakki yalnizca "Elci" rozetiyle: 3 ay uyelik + etkinlik + kulup +
+  baglanti (esikler data/rozet.ts).
+- Arkadaslik "ortak noktalar"dan: okul, is, hobi, muzik, semt.
 - Profil doldurma zorunlu, en fazla 3 ekran; en az 3 ilgi alani + sehir.
 - Medeni durum SORULMAZ. Yas gosterilmez; mezuniyet yili yalnizca arka
   planda +-8 yil yakinlik icin.

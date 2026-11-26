@@ -8,6 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { ilgiCevir } from '@/data/ilgi-alanlari';
 import { tarzCevir, type ProfilSarkisi } from '@/data/muzik';
+import { ELCI_DAVET_HAKKI, elciDurumu } from '@/data/rozet';
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 
 import type { Ben } from '@/data/eslestirme';
@@ -33,6 +34,8 @@ export type Uye = Ben & {
   liseYil?: string;
   /** Onceki isyerleri (kariyer niyeti) */
   eskiSirketler?: string[];
+  /** Uyelik baslangici (ISO); Elci rozeti 3 ay ister */
+  uyelikTarihi?: string;
   /** Profil fotografi (zorunlu). Prototipte cihazda data URI olarak saklanir. */
   foto?: string;
 };
@@ -58,8 +61,13 @@ type Durum = {
   /** Baglanti istegi gonderilen / kabul edilen kisiler */
   baglantilar: string[];
   sohbetler: Sohbet[];
-  /** Kalan davet hakki (baslangicta 1) */
+  /**
+   * Kalan davet hakki. 26 Kasim 2026'dan beri saklanmiyor: Elci rozetinden
+   * hesaplanir (bkz. data/rozet.ts). Eski kayitlarda kalan sayi yok sayilir.
+   */
   davetHakki: number;
+  /** Rozetle gelen haklardan kullanilan */
+  kullanilanDavet?: number;
   /** Uretilen davet kodum */
   davetKodum: string;
   /** Benim onerdigim kulupler */
@@ -79,7 +87,7 @@ const BASLANGIC: Durum = {
   kuluplerim: [],
   baglantilar: [],
   sohbetler: SOHBETLER,
-  davetHakki: 1,
+  davetHakki: 0,
   fikirlerim: [],
   destekledigimFikirler: [],
   evSahibiKuluplerim: [],
@@ -116,6 +124,8 @@ type Baglam = Durum & {
   /** Sohbet yalnizca benim listemden kalkar */
   sohbetSil: (sohbetId: string) => void;
   davetiKullan: () => void;
+  /** Elci rozeti: davet hakki yalnizca rozetle acilir */
+  elci: ReturnType<typeof elciDurumu>;
   /** Kulup oner; yeni fikrin id'sini dondurur */
   kulupOner: (f: Omit<KulupFikri, 'id' | 'oneren' | 'destekciler'>) => string;
   fikriDestekle: (id: string) => void;
@@ -160,7 +170,7 @@ export function OturumSaglayici({ children }: { children: ReactNode }) {
         if (!v) return;
         const kayit = { ...BASLANGIC, ...JSON.parse(v) } as Durum;
         // Eski ilgi / tarz kimlikleri ExCom kataloguna cevrilir (26 Kasim 2026)
-        if (kayit.uye) kayit.uye = { ...kayit.uye, ilgiler: ilgiCevir(kayit.uye.ilgiler), muzik: tarzCevir(kayit.uye.muzik) };
+        if (kayit.uye) kayit.uye = { ...kayit.uye, ilgiler: ilgiCevir(kayit.uye.ilgiler), muzik: tarzCevir(kayit.uye.muzik), uyelikTarihi: kayit.uye.uyelikTarihi ?? new Date().toISOString() };
         setDurum(kayit);
       })
       .catch(() => {})
@@ -180,9 +190,13 @@ export function OturumSaglayici({ children }: { children: ReactNode }) {
     const ekleCikar = (liste: string[], id: string) =>
       liste.includes(id) ? liste.filter((x) => x !== id) : [...liste, id];
 
+    const elci = elciDurumu({ uyelikTarihi: durum.uye?.uyelikTarihi, katildigimPlanlar: durum.katildigimPlanlar, kuluplerim: durum.kuluplerim, baglantilar: durum.baglantilar });
     return {
       ...durum,
       hazir,
+      elci,
+      // Davet hakki rozetten gelir; kullanilanlar dusulur
+      davetHakki: elci.kazandi ? Math.max(0, ELCI_DAVET_HAKKI - (durum.kullanilanDavet ?? 0)) : 0,
       davetKoduKabul: (davetEden) => guncelle((d) => ({ ...d, davetEden })),
       profiliKaydet: (u) =>
         guncelle((d) => {
@@ -191,7 +205,7 @@ export function OturumSaglayici({ children }: { children: ReactNode }) {
           const tanidiklar = davetci ? [davetci.id, ...davetci.tanidiklar.slice(0, 2)] : [];
           return {
             ...d,
-            uye: { ...u, davetEden: d.davetEden, tanidiklar },
+            uye: { ...u, davetEden: d.davetEden, tanidiklar, uyelikTarihi: u.uyelikTarihi ?? new Date().toISOString() },
             baglantilar: davetci ? [davetci.id] : [],
             // Ilgi secmek = o kulubun bekleme listesine girmek (ayrica bir sey yapmasi gerekmez)
             kuluplerim: KULUPLER.filter((k) => u.ilgiler.includes(k.ilgi)).map((k) => k.id),
@@ -240,7 +254,7 @@ export function OturumSaglayici({ children }: { children: ReactNode }) {
           }),
         })),
       sohbetSil: (sohbetId) => guncelle((d) => ({ ...d, sohbetler: d.sohbetler.filter((s) => s.id !== sohbetId) })),
-      davetiKullan: () => guncelle((d) => ({ ...d, davetHakki: Math.max(0, d.davetHakki - 1) })),
+      davetiKullan: () => guncelle((d) => ({ ...d, kullanilanDavet: (d.kullanilanDavet ?? 0) + 1 })),
       kulupOner: (f) => {
         const id = `fikir-ben-${Date.now().toString(36)}`;
         guncelle((d) => ({ ...d, fikirlerim: [{ ...f, id, oneren: 'ben', destekciler: [] }, ...d.fikirlerim] }));
@@ -322,8 +336,11 @@ function denemeUyesi(): Durum {
       lise: 'Kadıköy Anadolu Lisesi',
       uzmanliklar: ['Ürün yönetimi'],
       hakkinda: 'Prototipteki hazır deneme hesabı.',
+      // 4 ay once uye oldu: Elci rozeti kazanilmis halde gorulsun
+      uyelikTarihi: new Date(Date.now() - 120 * 24 * 60 * 60 * 1000).toISOString(),
     },
-    baglantilar: ['ayse'],
+    katildigimPlanlar: ['sergi-turu', 'kitap-kulubu'],
+    baglantilar: ['ayse', 'selin', 'burcu'],
     kuluplerim: ['tenis', 'sergi', 'kitap'],
     davetKodum: 'DENEME',
   };

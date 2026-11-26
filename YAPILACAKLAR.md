@@ -32,3 +32,5 @@ kurallari: src/data/eslestirme.ts (strateji sunumu sayfa 8).
 - [x] Ortak noktalar (niyet sorusu yerine): kayitta "Ortak noktalarini ekle" (Hobilerin zorunlu; Okulun, Isin, Muzigin istege bagli); eslestirme okul / sirket / uzmanlik / hobi / sanatci / semt; "Ortak noktalariniz" karti ve profil sayaci
 - [ ] Kulup turleri: okul, is, muzik kulupleri ("Bogazicililer", "Eski Garantililer", "Duman sevenler")
 - [x] Giris (prototip): "Zaten uyeyim" (Google / Apple / e-posta kodu) yalnizca mevcut uyeler; yeni hesap yalnizca davet kodundan sonra "Hesabini olustur" ile. Gercek Google/Apple girisi Supabase ile gelecek
+- [x] Davet hakki yalnizca Elci rozetiyle (3 ay, 2 etkinlik, 1 kulup, 3 baglanti); profilde ilerleme
+- [ ] Elci esiklerini ekip onaylamali; rozet basina kac davet, yenilenir mi?

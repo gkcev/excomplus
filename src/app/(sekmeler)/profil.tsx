@@ -6,7 +6,7 @@ import { Platform, Pressable, View } from 'react-native';
 import { FotoIzgarasi, EN_FAZLA_FOTO } from '@/components/fotolar';
 import { Icon, type IconName } from '@/components/icon';
 import { OrtakNoktaSayaci } from '@/components/ortak-nokta';
-import { Avatar, Dugme, Ekran, Kart, KulupGorseli, Metin } from '@/components/temel';
+import { Avatar, Dugme, Ekran, IlerlemeCubugu, Kart, KulupGorseli, Metin } from '@/components/temel';
 import { Bosluk, Colors, Durum, Kose, Marka, Yazi } from '@/constants/theme';
 import { davetPaylas } from '@/data/davet';
 import { fotoSec } from '@/data/foto';
@@ -95,6 +95,12 @@ export default function Profil() {
             <Metin style={{ ...Yazi.etiket, color: Colors.accent }}>{tamAd(davetci)} davet etti</Metin>
           </Pressable>
         )}
+        {o.elci.kazandi && (
+          <View style={{ alignSelf: 'flex-start', flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: Marka.sari, borderRadius: Kose.hap, paddingHorizontal: 12, paddingVertical: 6 }}>
+            <Icon name="yildiz" size={14} color={Colors.text} />
+            <Metin style={{ ...Yazi.etiket, color: Colors.text }}>Elçi</Metin>
+          </View>
+        )}
 
         {/* Doluluk: tik, yazi ve 4 parcali cubuk */}
         <View
@@ -168,30 +174,61 @@ export default function Profil() {
         </View>
       </Kart>
 
-      {/* ---------------- Davet ---------------- */}
-      <Kart style={{ padding: Bosluk.lg, gap: Bosluk.md, backgroundColor: Marka.lacivert }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Metin style={{ ...Yazi.kartBasligi, color: Colors.white }}>Davet hakkın: {o.davetHakki}</Metin>
-          <Icon name="gift" size={22} color={Marka.sari} />
-        </View>
-        <Metin style={{ ...Yazi.ikincil, color: '#D5D9E0' }}>
-          Plus davetle büyüyor. Davet ettiğin kişinin profilinde senin adın görünür; güvendiğin birini seç.
-        </Metin>
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: Bosluk.md, borderRadius: Kose.md, backgroundColor: 'rgba(255,255,255,0.08)' }}>
-          {o.davetKodum.split('').map((h, i) => (
-            <View key={i} style={{ width: 34, height: 42, borderRadius: 8, backgroundColor: Colors.white, alignItems: 'center', justifyContent: 'center' }}>
-              <Metin style={{ fontSize: 20, fontWeight: '700' }}>{h}</Metin>
+      {/* ---------------- Davet: yalnizca Elci rozetiyle (data/rozet.ts) ---------------- */}
+      {o.elci.kazandi ? (
+        <Kart style={{ padding: Bosluk.lg, gap: Bosluk.md, backgroundColor: Marka.lacivert }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Metin style={{ ...Yazi.kartBasligi, color: Colors.white }}>Davet hakkın: {o.davetHakki}</Metin>
+            <Icon name="gift" size={22} color={Marka.sari} />
+          </View>
+          <Metin style={{ ...Yazi.ikincil, color: '#D5D9E0' }}>
+            Elçi rozetinle davet hakkı kazandın. Davet ettiğin kişinin profilinde senin adın görünür; güvendiğin birini seç.
+          </Metin>
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: Bosluk.md, borderRadius: Kose.md, backgroundColor: 'rgba(255,255,255,0.08)' }}>
+            {o.davetKodum.split('').map((h, i) => (
+              <View key={i} style={{ width: 34, height: 42, borderRadius: 8, backgroundColor: Colors.white, alignItems: 'center', justifyContent: 'center' }}>
+                <Metin style={{ fontSize: 20, fontWeight: '700' }}>{h}</Metin>
+              </View>
+            ))}
+          </View>
+          <Dugme
+            baslik={o.davetHakki === 0 ? 'Davet hakkın bitti' : kopyalandi ? 'Kopyalandı ✓' : 'Davet gönder'}
+            tur="turuncu"
+            ikon="paylas"
+            pasif={o.davetHakki === 0}
+            onPress={davetEt}
+          />
+        </Kart>
+      ) : (
+        <Kart style={{ padding: Bosluk.lg, gap: Bosluk.md }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: Bosluk.md }}>
+            <View style={{ width: 48, height: 48, borderRadius: 24, alignItems: 'center', justifyContent: 'center', backgroundColor: Marka.seftali, borderWidth: 2, borderColor: Marka.sari, borderStyle: 'dashed' }}>
+              <Icon name="yildiz" size={22} color={Colors.accent} />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Metin style={Yazi.kartBasligi}>Elçi rozeti</Metin>
+              <Metin style={{ ...Yazi.ikincil, color: Colors.textMuted }}>Kazanınca davet hakkın açılır.</Metin>
+            </View>
+          </View>
+          <Metin style={{ ...Yazi.ikincil, color: Colors.textMuted }}>
+            Plus davetle büyüyor. Güven zinciri korunsun diye davet hakkı, uygulamada gerçekten var olan üyelere açılıyor.
+          </Metin>
+          {o.elci.adimlar.map((a) => (
+            <View key={a.ad} style={{ gap: 6 }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: Bosluk.sm }}>
+                <View style={{ width: 22, height: 22, borderRadius: 11, alignItems: 'center', justifyContent: 'center', backgroundColor: a.tamam ? Durum.onaylandi.yazi : Colors.background, borderWidth: a.tamam ? 0 : 1, borderColor: Colors.border }}>
+                  {a.tamam && <Icon name="check" size={12} color={Colors.white} strokeWidth={2.6} />}
+                </View>
+                <Metin style={{ ...Yazi.isim, flex: 1 }}>{a.ad}</Metin>
+                <Metin style={{ ...Yazi.etiket, color: a.tamam ? Durum.onaylandi.yazi : Colors.textMuted }}>
+                  {a.deger} / {a.hedef} {a.birim}
+                </Metin>
+              </View>
+              {!a.tamam && <IlerlemeCubugu oran={a.deger / a.hedef} />}
             </View>
           ))}
-        </View>
-        <Dugme
-          baslik={o.davetHakki === 0 ? 'Davet hakkın bitti' : kopyalandi ? 'Kopyalandı ✓' : 'Davet gönder'}
-          tur="turuncu"
-          ikon="paylas"
-          pasif={o.davetHakki === 0}
-          onPress={davetEt}
-        />
-      </Kart>
+        </Kart>
+      )}
 
       {/* ---------------- Etkinliklerim ---------------- */}
       <BolumBasligi baslik="Etkinliklerim" sag="Tümü" onSag={() => router.navigate('/etkinlikler')} />

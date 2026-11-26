@@ -90,7 +90,10 @@ export default function AnaSayfa() {
             <View style={{ flex: 1 }}>
               <Metin style={Yazi.kartBasligi}>{olusan.ad} için {olusan.esik - olusanSayi} kişi kaldı</Metin>
               <Metin style={{ ...Yazi.ikincil, color: Colors.textMuted }}>
-                Bekleme listesindesin. {olusan.esik} kişi olunca kulüp ve sohbeti açılır. {ilgiAdi(olusan.ilgi)} seven bir tanıdığını davet et, daha hızlı açılsın.
+                Bekleme listesindesin. {olusan.esik} kişi olunca kulüp ve sohbeti açılır.{' '}
+                {oturum.davetHakki > 0
+                  ? `${ilgiAdi(olusan.ilgi)} seven bir tanıdığını davet et, daha hızlı açılsın.`
+                  : `${ilgiAdi(olusan.ilgi)} seven yeni üyeler geldikçe dolacak; açılınca haber vereceğiz.`}
               </Metin>
             </View>
           </View>
@@ -100,6 +103,8 @@ export default function AnaSayfa() {
             </View>
             <Metin style={Yazi.etiket}>{olusanSayi} / {olusan.esik}</Metin>
           </View>
+          {/* Davet yalnizca Elci rozetiyle (data/rozet.ts) */}
+          {(oturum.davetHakki > 0 || davetKopyalandi) && (
           <Dugme
             kucuk
             baslik={davetKopyalandi ? 'Davet metni kopyalandı' : 'Tanıdığını davet et'}
@@ -114,6 +119,7 @@ export default function AnaSayfa() {
               }
             }}
           />
+          )}
         </Kart>
       )}
 
